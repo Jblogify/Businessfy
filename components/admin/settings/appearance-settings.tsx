@@ -1,0 +1,359 @@
+"use client"
+
+import type React from "react"
+
+import { useState } from "react"
+import { Button } from "@/components/ui/button"
+import { Label } from "@/components/ui/label"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { useTheme } from "next-themes"
+import { Check, Loader2, Moon, Sun, Monitor } from "lucide-react"
+import { useToast } from "@/hooks/use-toast"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Slider } from "@/components/ui/slider"
+import { HexColorPicker } from "react-colorful"
+
+// Define color themes
+const colorThemes = [
+  {
+    name: "Green (Default)",
+    primary: "#15803d", // green-700
+    secondary: "#dcfce7", // green-100
+    accent: "#22c55e", // green-500
+  },
+  {
+    name: "Blue",
+    primary: "#1d4ed8", // blue-700
+    secondary: "#dbeafe", // blue-100
+    accent: "#3b82f6", // blue-500
+  },
+  {
+    name: "Purple",
+    primary: "#7e22ce", // purple-700
+    secondary: "#f3e8ff", // purple-100
+    accent: "#a855f7", // purple-500
+  },
+  {
+    name: "Red",
+    primary: "#b91c1c", // red-700
+    secondary: "#fee2e2", // red-100
+    accent: "#ef4444", // red-500
+  },
+  {
+    name: "Orange",
+    primary: "#c2410c", // orange-700
+    secondary: "#ffedd5", // orange-100
+    accent: "#f97316", // orange-500
+  },
+  {
+    name: "Teal",
+    primary: "#0f766e", // teal-700
+    secondary: "#ccfbf1", // teal-100
+    accent: "#14b8a6", // teal-500
+  },
+]
+
+export function AppearanceSettings() {
+  const { toast } = useToast()
+  const { theme, setTheme } = useTheme()
+  const [isLoading, setIsLoading] = useState(false)
+  const [selectedColorTheme, setSelectedColorTheme] = useState(0)
+  const [customPrimaryColor, setCustomPrimaryColor] = useState("#15803d")
+  const [customSecondaryColor, setCustomSecondaryColor] = useState("#dcfce7")
+  const [customAccentColor, setCustomAccentColor] = useState("#22c55e")
+  const [fontSize, setFontSize] = useState(16)
+  const [borderRadius, setBorderRadius] = useState(8)
+  const [activeTab, setActiveTab] = useState("theme")
+
+  // Apply theme changes
+  const applyThemeChanges = () => {
+    setIsLoading(true)
+
+    // Get the selected theme colors
+    let primary, secondary, accent
+    if (selectedColorTheme === colorThemes.length) {
+      // Custom theme
+      primary = customPrimaryColor
+      secondary = customSecondaryColor
+      accent = customAccentColor
+    } else {
+      // Predefined theme
+      primary = colorThemes[selectedColorTheme].primary
+      secondary = colorThemes[selectedColorTheme].secondary
+      accent = colorThemes[selectedColorTheme].accent
+    }
+
+    // Update CSS variables
+    document.documentElement.style.setProperty("--primary", primary)
+    document.documentElement.style.setProperty("--primary-foreground", "#ffffff")
+    document.documentElement.style.setProperty("--secondary", secondary)
+    document.documentElement.style.setProperty("--accent", accent)
+    document.documentElement.style.setProperty("--font-size-base", `${fontSize}px`)
+    document.documentElement.style.setProperty("--radius", `${borderRadius}px`)
+
+    // Simulate API call to save preferences
+    setTimeout(() => {
+      setIsLoading(false)
+      toast({
+        title: "Appearance updated",
+        description: "Your appearance settings have been updated successfully.",
+      })
+    }, 1000)
+  }
+
+  // Reset to default theme
+  const resetToDefault = () => {
+    setSelectedColorTheme(0)
+    setCustomPrimaryColor("#15803d")
+    setCustomSecondaryColor("#dcfce7")
+    setCustomAccentColor("#22c55e")
+    setFontSize(16)
+    setBorderRadius(8)
+
+    // Reset CSS variables
+    document.documentElement.style.removeProperty("--primary")
+    document.documentElement.style.removeProperty("--primary-foreground")
+    document.documentElement.style.removeProperty("--secondary")
+    document.documentElement.style.removeProperty("--accent")
+    document.documentElement.style.removeProperty("--font-size-base")
+    document.documentElement.style.removeProperty("--radius")
+
+    toast({
+      title: "Reset to defaults",
+      description: "Your appearance settings have been reset to default values.",
+    })
+  }
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <h3 className="text-lg font-medium">Appearance</h3>
+        <p className="text-sm text-muted-foreground">Customize the appearance of the dashboard to your preference.</p>
+      </div>
+
+      <Tabs defaultValue="theme" value={activeTab} onValueChange={setActiveTab}>
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="theme">Theme Mode</TabsTrigger>
+          <TabsTrigger value="colors">Colors</TabsTrigger>
+          <TabsTrigger value="typography">Typography & UI</TabsTrigger>
+        </TabsList>
+        <TabsContent value="theme" className="space-y-4">
+          <div className="space-y-4">
+            <div className="grid grid-cols-3 gap-4">
+              <div
+                className={`flex cursor-pointer flex-col items-center justify-center rounded-md border p-4 ${
+                  theme === "light" ? "border-green-700 bg-green-50" : "border-muted bg-transparent"
+                }`}
+                onClick={() => setTheme("light")}
+              >
+                <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-sm">
+                  <Sun className="h-5 w-5 text-yellow-500" />
+                </div>
+                <span className="text-sm font-medium">Light</span>
+                {theme === "light" && <Check className="mt-2 h-4 w-4 text-green-700" />}
+              </div>
+              <div
+                className={`flex cursor-pointer flex-col items-center justify-center rounded-md border p-4 ${
+                  theme === "dark" ? "border-green-700 bg-green-950" : "border-muted bg-transparent"
+                }`}
+                onClick={() => setTheme("dark")}
+              >
+                <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-full bg-gray-900 shadow-sm">
+                  <Moon className="h-5 w-5 text-gray-300" />
+                </div>
+                <span className={`text-sm font-medium ${theme === "dark" ? "text-white" : ""}`}>Dark</span>
+                {theme === "dark" && <Check className="mt-2 h-4 w-4 text-green-400" />}
+              </div>
+              <div
+                className={`flex cursor-pointer flex-col items-center justify-center rounded-md border p-4 ${
+                  theme === "system" ? "border-green-700 bg-green-50 dark:bg-green-950" : "border-muted bg-transparent"
+                }`}
+                onClick={() => setTheme("system")}
+              >
+                <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-white to-gray-900 shadow-sm">
+                  <Monitor className="h-5 w-5 text-blue-500" />
+                </div>
+                <span className="text-sm font-medium">System</span>
+                {theme === "system" && <Check className="mt-2 h-4 w-4 text-green-700 dark:text-green-400" />}
+              </div>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              Choose between light, dark, or system theme. System theme will automatically switch between light and dark
+              based on your device settings.
+            </p>
+          </div>
+        </TabsContent>
+        <TabsContent value="colors" className="space-y-4">
+          <div className="space-y-4">
+            <RadioGroup
+              value={selectedColorTheme.toString()}
+              onValueChange={(value) => setSelectedColorTheme(Number.parseInt(value))}
+              className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3"
+            >
+              {colorThemes.map((theme, index) => (
+                <div key={index} className="relative">
+                  <RadioGroupItem value={index.toString()} id={`theme-${index}`} className="peer sr-only" />
+                  <Label
+                    htmlFor={`theme-${index}`}
+                    className="flex cursor-pointer flex-col space-y-2 rounded-md border p-4 hover:bg-muted peer-data-[state=checked]:border-green-700 peer-data-[state=checked]:bg-green-50 dark:peer-data-[state=checked]:bg-green-950"
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium">{theme.name}</span>
+                      {selectedColorTheme === index && <Check className="h-4 w-4 text-green-700 dark:text-green-400" />}
+                    </div>
+                    <div className="flex space-x-2">
+                      <div className="h-6 w-6 rounded-full" style={{ backgroundColor: theme.primary }}></div>
+                      <div className="h-6 w-6 rounded-full" style={{ backgroundColor: theme.secondary }}></div>
+                      <div className="h-6 w-6 rounded-full" style={{ backgroundColor: theme.accent }}></div>
+                    </div>
+                  </Label>
+                </div>
+              ))}
+              <div className="relative">
+                <RadioGroupItem value={colorThemes.length.toString()} id={`theme-custom`} className="peer sr-only" />
+                <Label
+                  htmlFor={`theme-custom`}
+                  className="flex cursor-pointer flex-col space-y-2 rounded-md border p-4 hover:bg-muted peer-data-[state=checked]:border-green-700 peer-data-[state=checked]:bg-green-50 dark:peer-data-[state=checked]:bg-green-950"
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium">Custom</span>
+                    {selectedColorTheme === colorThemes.length && (
+                      <Check className="h-4 w-4 text-green-700 dark:text-green-400" />
+                    )}
+                  </div>
+                  <div className="flex space-x-2">
+                    <div className="h-6 w-6 rounded-full" style={{ backgroundColor: customPrimaryColor }}></div>
+                    <div className="h-6 w-6 rounded-full" style={{ backgroundColor: customSecondaryColor }}></div>
+                    <div className="h-6 w-6 rounded-full" style={{ backgroundColor: customAccentColor }}></div>
+                  </div>
+                </Label>
+              </div>
+            </RadioGroup>
+
+            {selectedColorTheme === colorThemes.length && (
+              <div className="space-y-4 rounded-md border p-4">
+                <div className="space-y-2">
+                  <Label>Primary Color</Label>
+                  <div className="flex space-x-4">
+                    <HexColorPicker color={customPrimaryColor} onChange={setCustomPrimaryColor} />
+                    <div className="flex flex-col space-y-2">
+                      <div className="h-12 w-12 rounded-md" style={{ backgroundColor: customPrimaryColor }}></div>
+                      <Input
+                        value={customPrimaryColor}
+                        onChange={(e) => setCustomPrimaryColor(e.target.value)}
+                        className="w-24"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label>Secondary Color</Label>
+                  <div className="flex space-x-4">
+                    <HexColorPicker color={customSecondaryColor} onChange={setCustomSecondaryColor} />
+                    <div className="flex flex-col space-y-2">
+                      <div className="h-12 w-12 rounded-md" style={{ backgroundColor: customSecondaryColor }}></div>
+                      <Input
+                        value={customSecondaryColor}
+                        onChange={(e) => setCustomSecondaryColor(e.target.value)}
+                        className="w-24"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label>Accent Color</Label>
+                  <div className="flex space-x-4">
+                    <HexColorPicker color={customAccentColor} onChange={setCustomAccentColor} />
+                    <div className="flex flex-col space-y-2">
+                      <div className="h-12 w-12 rounded-md" style={{ backgroundColor: customAccentColor }}></div>
+                      <Input
+                        value={customAccentColor}
+                        onChange={(e) => setCustomAccentColor(e.target.value)}
+                        className="w-24"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </TabsContent>
+        <TabsContent value="typography" className="space-y-4">
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <Label>Font Size: {fontSize}px</Label>
+                <span className="text-sm text-muted-foreground">{fontSize}px</span>
+              </div>
+              <Slider value={[fontSize]} min={12} max={20} step={1} onValueChange={(value) => setFontSize(value[0])} />
+              <p className="text-sm text-muted-foreground">
+                Adjust the base font size for the dashboard. This will affect all text elements.
+              </p>
+            </div>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <Label>Border Radius: {borderRadius}px</Label>
+                <span className="text-sm text-muted-foreground">{borderRadius}px</span>
+              </div>
+              <Slider
+                value={[borderRadius]}
+                min={0}
+                max={16}
+                step={1}
+                onValueChange={(value) => setBorderRadius(value[0])}
+              />
+              <p className="text-sm text-muted-foreground">
+                Adjust the border radius for UI elements like buttons, cards, and inputs.
+              </p>
+            </div>
+            <div className="space-y-2">
+              <Label>Preview</Label>
+              <div className="rounded-md border p-4">
+                <h4 className="text-lg font-medium" style={{ fontSize: `${fontSize + 4}px` }}>
+                  Sample Heading
+                </h4>
+                <p className="mb-4" style={{ fontSize: `${fontSize}px` }}>
+                  This is a sample paragraph to preview your typography settings.
+                </p>
+                <div className="flex space-x-2">
+                  <Button className="bg-green-700 hover:bg-green-800" style={{ borderRadius: `${borderRadius}px` }}>
+                    Primary Button
+                  </Button>
+                  <Button variant="outline" style={{ borderRadius: `${borderRadius}px` }}>
+                    Secondary Button
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </TabsContent>
+      </Tabs>
+
+      <div className="flex space-x-2">
+        <Button onClick={applyThemeChanges} disabled={isLoading} className="bg-green-700 hover:bg-green-800">
+          {isLoading ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Saving...
+            </>
+          ) : (
+            "Save Changes"
+          )}
+        </Button>
+        <Button variant="outline" onClick={resetToDefault} disabled={isLoading}>
+          Reset to Defaults
+        </Button>
+      </div>
+    </div>
+  )
+}
+
+// Helper component for the custom color picker
+function Input({ className, ...props }: React.InputHTMLAttributes<HTMLInputElement>) {
+  return (
+    <input
+      className={`flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
+      {...props}
+    />
+  )
+}
