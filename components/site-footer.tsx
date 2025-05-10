@@ -10,9 +10,10 @@ export function SiteFooter() {
       <div className="container py-12 md:py-16">
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
           <div>
-            <h3 className="text-xl font-bold mb-4">Jalal Nasser</h3>
+            <h3 className="text-xl font-bold mb-4">BusinessFy</h3>
             <p className="mb-4 text-green-100">
-              Leading Saudi Arabian company providing innovative solutions and services across multiple sectors.
+              BusinessFy is a leading Saudi Arabian company providing innovative solutions and services across multiple
+              sectors.
             </p>
             <div className="flex space-x-4">
               <Link
@@ -134,7 +135,7 @@ export function SiteFooter() {
       </div>
       <div className="border-t border-green-800 py-6">
         <div className="container text-center text-green-100">
-          <p>&copy; {new Date().getFullYear()} Jalal Nasser. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} BusinessFy. All rights reserved.</p>
         </div>
       </div>
     </footer>

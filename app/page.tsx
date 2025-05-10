@@ -26,8 +26,8 @@ export default function Home() {
               Building the Future of Saudi Arabia
             </h1>
             <p className="mb-8 max-w-3xl text-lg md:text-xl">
-              Jalal Nasser is a leading Saudi Arabian company providing innovative solutions and services across
-              multiple sectors.
+              BusinessFy is a leading Saudi Arabian company providing innovative solutions and services across multiple
+              sectors.
             </p>
             <div className="flex flex-col space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0">
               <Button asChild size="lg" className="bg-green-700 hover:bg-green-800">
@@ -50,9 +50,9 @@ export default function Home() {
           <div className="container">
             <div className="grid gap-12 md:grid-cols-2">
               <div className="flex flex-col justify-center">
-                <h2 className="mb-6 text-3xl font-bold text-green-800 md:text-4xl">About Jalal Nasser</h2>
+                <h2 className="mb-6 text-3xl font-bold text-green-800 md:text-4xl">About BusinessFy</h2>
                 <p className="mb-4 text-gray-700">
-                  Founded in 1995, Jalal Nasser has grown to become one of the most respected companies in Saudi Arabia.
+                  Founded in 1995, BusinessFy has grown to become one of the most respected companies in Saudi Arabia.
                   With a commitment to excellence and innovation, we have successfully completed numerous projects
                   across the Kingdom.
                 </p>
@@ -211,7 +211,7 @@ export default function Home() {
             <div className="mb-12 text-center">
               <h2 className="mb-4 text-3xl font-bold text-green-800 md:text-4xl">What Our Clients Say</h2>
               <p className="mx-auto max-w-3xl text-gray-700">
-                Hear from our satisfied clients about their experience working with Jalal Nasser.
+                Hear from our satisfied clients about their experience working with BusinessFy.
               </p>
             </div>
             <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
@@ -220,19 +220,19 @@ export default function Home() {
                   name: "Mohammed Al-Saud",
                   position: "CEO, Saudi Development Company",
                   testimonial:
-                    "Jalal Nasser exceeded our expectations with their professionalism and attention to detail. They delivered our project on time and within budget.",
+                    "BusinessFy exceeded our expectations with their professionalism and attention to detail. They delivered our project on time and within budget.",
                 },
                 {
                   name: "Fatima Al-Rashid",
                   position: "Director, Riyadh Investments",
                   testimonial:
-                    "Working with Jalal Nasser was a pleasure. Their team was responsive, knowledgeable, and committed to delivering high-quality results.",
+                    "Working with BusinessFy was a pleasure. Their team was responsive, knowledgeable, and committed to delivering high-quality results.",
                 },
                 {
                   name: "Abdullah Al-Qahtani",
                   position: "Project Manager, Ministry of Housing",
                   testimonial:
-                    "Jalal Nasser's expertise and innovative approach helped us overcome complex challenges and achieve our project goals.",
+                    "BusinessFy's expertise and innovative approach helped us overcome complex challenges and achieve our project goals.",
                 },
               ].map((testimonial, index) => (
                 <Card key={index} className="overflow-hidden transition-all hover:shadow-lg">
@@ -263,7 +263,7 @@ export default function Home() {
           <div className="container text-center">
             <h2 className="mb-6 text-3xl font-bold md:text-4xl">Ready to Start Your Project?</h2>
             <p className="mx-auto mb-8 max-w-2xl text-green-100">
-              Contact us today to discuss how Jalal Nasser can help bring your vision to life. Our team is ready to
+              Contact us today to discuss how BusinessFy can help bring your vision to life. Our team is ready to
               provide the expertise and support you need.
             </p>
             <Button asChild size="lg" className="bg-white text-green-800 hover:bg-green-100">

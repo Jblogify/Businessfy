@@ -8,7 +8,7 @@ export function SiteHeader() {
       <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-8">
         <div className="flex items-center">
           <Link href="/" className="flex items-center space-x-2">
-            <span className="text-xl font-bold">Jalal Nasser</span>
+            <span className="text-xl font-bold">BusinessFy</span>
           </Link>
         </div>
 

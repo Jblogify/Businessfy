@@ -35,9 +35,9 @@ type ProfileFormValues = z.infer<typeof profileFormSchema>
 const defaultValues: Partial<ProfileFormValues> = {
   name: "Admin User",
   email: "admin@jalalnasser.com",
-  bio: "Administrator at Jalal Nasser website.",
+  bio: "Administrator at BusinessFy website.",
   jobTitle: "Website Administrator",
-  company: "Jalal Nasser",
+  company: "BusinessFy",
 }
 
 export function ProfileSettings() {

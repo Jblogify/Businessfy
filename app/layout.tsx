@@ -9,7 +9,7 @@ import { Suspense } from "react"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Jalal Nasser Real Estate",
+  title: "BusinessFy Real Estate",
   description: "Premium real estate projects and services",
     generator: 'v0.dev'
 }
