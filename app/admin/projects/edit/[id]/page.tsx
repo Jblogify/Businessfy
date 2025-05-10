@@ -9,7 +9,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
 import { format } from "date-fns"
-import { CalendarIcon, Trash2, Upload, X } from "lucide-react"
+import { CalendarIcon, Trash2, Save, Eye, ArrowLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
@@ -20,9 +20,21 @@ import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { cn } from "@/lib/utils"
-import { Separator } from "@/components/ui/separator"
 import { Switch } from "@/components/ui/switch"
+import { Badge } from "@/components/ui/badge"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import Image from "next/image"
+import { ProjectCategorySelector } from "@/components/admin/projects/project-category-selector"
+import { ProjectMediaManager } from "@/components/admin/projects/project-media-manager"
+import { ProjectRelatedSelector } from "@/components/admin/projects/project-related-selector"
 
 // Sample project data
 const projects = [
@@ -61,6 +73,8 @@ const projects = [
     results:
       "The completed district has become a landmark in Riyadh's urban landscape, providing a world-class business environment that attracts both local and international companies. The project has contributed to the city's economic development and helped position Saudi Arabia as a regional financial hub. The district's sustainable features have set new standards for green building in the region.",
     relatedProjects: [2, 3, 5],
+    featured: true,
+    published: true,
   },
   {
     id: 2,
@@ -96,6 +110,8 @@ const projects = [
     results:
       "While still under construction, the Jeddah Tower has already become a symbol of Saudi Arabia's ambition and technological capability. The project is expected to stimulate economic growth in the Jeddah area and serve as a catalyst for the development of the Jeddah Economic City, a new urban area planned around the tower.",
     relatedProjects: [1, 3, 6],
+    featured: true,
+    published: true,
   },
 ]
 
@@ -167,6 +183,8 @@ const formSchema = z.object({
   features: z.array(z.string()).min(1, {
     message: "At least one feature is required.",
   }),
+  relatedProjects: z.array(z.number()).optional(),
+  featured: z.boolean().default(false),
   published: z.boolean().default(true),
 })
 
@@ -179,7 +197,13 @@ export default function ProjectEditPage({ params }: { params: { id: string } }) 
   const [newFeature, setNewFeature] = useState("")
   const [mainImage, setMainImage] = useState<string | null>(null)
   const [galleryImages, setGalleryImages] = useState<string[]>([])
+  const [relatedProjects, setRelatedProjects] = useState<number[]>([])
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
+  const [isPreviewDialogOpen, setIsPreviewDialogOpen] = useState(false)
+  const [isSaveSuccessful, setIsSaveSuccessful] = useState(false)
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
+  const [isUnsavedChangesDialogOpen, setIsUnsavedChangesDialogOpen] = useState(false)
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -196,6 +220,8 @@ export default function ProjectEditPage({ params }: { params: { id: string } }) 
       challenges: "",
       results: "",
       features: [],
+      relatedProjects: [],
+      featured: false,
       published: true,
     },
   })
@@ -206,8 +232,8 @@ export default function ProjectEditPage({ params }: { params: { id: string } }) 
       if (project) {
         form.reset({
           title: project.title,
-          location: project.location.toLowerCase(),
-          category: project.category.toLowerCase(),
+          location: project.location.toLowerCase().replace(" ", "-"),
+          category: project.category.toLowerCase().replace(" ", "-"),
           value: project.value,
           status: project.status.toLowerCase().replace(" ", "-"),
           date: new Date(project.date),
@@ -219,13 +245,23 @@ export default function ProjectEditPage({ params }: { params: { id: string } }) 
           challenges: project.challenges,
           results: project.results,
           features: project.features,
-          published: true,
+          relatedProjects: project.relatedProjects,
+          featured: project.featured,
+          published: project.published,
         })
         setFeatures(project.features)
         setMainImage(project.image)
         setGalleryImages(project.gallery)
+        setRelatedProjects(project.relatedProjects)
       }
     }
+
+    // Listen for form changes to detect unsaved changes
+    const subscription = form.watch(() => {
+      setHasUnsavedChanges(true)
+    })
+
+    return () => subscription.unsubscribe()
   }, [isNew, projectId, form])
 
   function onSubmit(values: z.infer<typeof formSchema>) {
@@ -235,8 +271,42 @@ export default function ProjectEditPage({ params }: { params: { id: string } }) 
     setTimeout(() => {
       console.log(values)
       setIsSubmitting(false)
-      router.push("/admin/projects")
+      setIsSaveSuccessful(true)
+      setHasUnsavedChanges(false)
+
+      // Hide success message after 3 seconds
+      setTimeout(() => {
+        setIsSaveSuccessful(false)
+      }, 3000)
     }, 1500)
+  }
+
+  const handleDelete = () => {
+    setIsDeleteDialogOpen(true)
+  }
+
+  const confirmDelete = () => {
+    // In a real app, you would call an API to delete the project
+    console.log(`Deleting project ${projectId}`)
+    setIsDeleteDialogOpen(false)
+    router.push("/admin/projects")
+  }
+
+  const handlePreview = () => {
+    setIsPreviewDialogOpen(true)
+  }
+
+  const handleCancel = () => {
+    if (hasUnsavedChanges) {
+      setIsUnsavedChangesDialogOpen(true)
+    } else {
+      router.push("/admin/projects")
+    }
+  }
+
+  const confirmCancel = () => {
+    setIsUnsavedChangesDialogOpen(false)
+    router.push("/admin/projects")
   }
 
   const addFeature = () => {
@@ -245,6 +315,7 @@ export default function ProjectEditPage({ params }: { params: { id: string } }) 
       setFeatures(updatedFeatures)
       form.setValue("features", updatedFeatures)
       setNewFeature("")
+      setHasUnsavedChanges(true)
     }
   }
 
@@ -252,6 +323,7 @@ export default function ProjectEditPage({ params }: { params: { id: string } }) 
     const updatedFeatures = features.filter((_, i) => i !== index)
     setFeatures(updatedFeatures)
     form.setValue("features", updatedFeatures)
+    setHasUnsavedChanges(true)
   }
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>, type: "main" | "gallery") => {
@@ -266,33 +338,78 @@ export default function ProjectEditPage({ params }: { params: { id: string } }) 
       const newImages = Array.from(files).map((file) => URL.createObjectURL(file))
       setGalleryImages([...galleryImages, ...newImages])
     }
+    setHasUnsavedChanges(true)
   }
 
   const removeGalleryImage = (index: number) => {
     setGalleryImages(galleryImages.filter((_, i) => i !== index))
+    setHasUnsavedChanges(true)
+  }
+
+  const handleRelatedProjectsChange = (selectedProjects: number[]) => {
+    setRelatedProjects(selectedProjects)
+    form.setValue("relatedProjects", selectedProjects)
+    setHasUnsavedChanges(true)
   }
 
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">{isNew ? "Add New Project" : "Edit Project"}</h1>
-          <p className="text-muted-foreground">{isNew ? "Create a new project" : "Update project information"}</p>
+        <div className="flex items-center gap-2">
+          <Button variant="outline" size="icon" asChild>
+            <Link href="/admin/projects">
+              <ArrowLeft className="h-4 w-4" />
+            </Link>
+          </Button>
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">{isNew ? "Add New Project" : "Edit Project"}</h1>
+            <p className="text-muted-foreground">{isNew ? "Create a new project" : "Update project information"}</p>
+          </div>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" asChild>
-            <Link href="/admin/projects">Cancel</Link>
+          {!isNew && (
+            <>
+              <Button variant="outline" onClick={handlePreview}>
+                <Eye className="mr-2 h-4 w-4" />
+                Preview
+              </Button>
+              <Button variant="destructive" onClick={handleDelete}>
+                <Trash2 className="mr-2 h-4 w-4" />
+                Delete
+              </Button>
+            </>
+          )}
+          <Button variant="outline" onClick={handleCancel}>
+            Cancel
+          </Button>
+          <Button type="submit" form="project-form" className="bg-green-700 hover:bg-green-800" disabled={isSubmitting}>
+            {isSubmitting ? (
+              <>Saving...</>
+            ) : (
+              <>
+                <Save className="mr-2 h-4 w-4" />
+                {isNew ? "Create Project" : "Save Changes"}
+              </>
+            )}
           </Button>
         </div>
       </div>
 
+      {isSaveSuccessful && (
+        <Alert className="bg-green-50 text-green-800 border-green-200">
+          <AlertTitle>Success!</AlertTitle>
+          <AlertDescription>Project has been {isNew ? "created" : "updated"} successfully.</AlertDescription>
+        </Alert>
+      )}
+
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <form id="project-form" onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <Tabs defaultValue="basic" className="space-y-6">
-            <TabsList className="grid w-full grid-cols-4">
+            <TabsList className="grid w-full grid-cols-5">
               <TabsTrigger value="basic">Basic Information</TabsTrigger>
               <TabsTrigger value="content">Content</TabsTrigger>
               <TabsTrigger value="media">Media</TabsTrigger>
+              <TabsTrigger value="related">Related Projects</TabsTrigger>
               <TabsTrigger value="settings">Settings</TabsTrigger>
             </TabsList>
 
@@ -338,20 +455,7 @@ export default function ProjectEditPage({ params }: { params: { id: string } }) 
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Category</FormLabel>
-                          <Select onValueChange={field.onChange} defaultValue={field.value}>
-                            <FormControl>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select a category" />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              {categories.map((category) => (
-                                <SelectItem key={category.value} value={category.value}>
-                                  {category.label}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
+                          <ProjectCategorySelector value={field.value} onChange={field.onChange} />
                           <FormMessage />
                         </FormItem>
                       )}
@@ -363,7 +467,7 @@ export default function ProjectEditPage({ params }: { params: { id: string } }) 
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Location</FormLabel>
-                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <Select onValueChange={field.onChange} value={field.value}>
                             <FormControl>
                               <SelectTrigger>
                                 <SelectValue placeholder="Select a location" />
@@ -416,7 +520,7 @@ export default function ProjectEditPage({ params }: { params: { id: string } }) 
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Status</FormLabel>
-                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <Select onValueChange={field.onChange} value={field.value}>
                             <FormControl>
                               <SelectTrigger>
                                 <SelectValue placeholder="Select a status" />
@@ -629,102 +733,34 @@ export default function ProjectEditPage({ params }: { params: { id: string } }) 
                   <CardDescription>Upload images for the project.</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                  <div className="space-y-4">
-                    <FormLabel>Main Image</FormLabel>
-                    <div className="flex flex-col gap-4">
-                      {mainImage && (
-                        <div className="relative rounded-md border overflow-hidden h-[300px]">
-                          <Image
-                            src={mainImage || "/placeholder.svg"}
-                            alt="Main project image"
-                            fill
-                            className="object-cover"
-                          />
-                          <Button
-                            type="button"
-                            variant="destructive"
-                            size="icon"
-                            className="absolute top-2 right-2"
-                            onClick={() => setMainImage(null)}
-                          >
-                            <X className="h-4 w-4" />
-                            <span className="sr-only">Remove</span>
-                          </Button>
-                        </div>
-                      )}
-                      <div className="flex items-center justify-center w-full">
-                        <label
-                          htmlFor="main-image-upload"
-                          className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100"
-                        >
-                          <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                            <Upload className="w-8 h-8 mb-3 text-gray-500" />
-                            <p className="mb-2 text-sm text-gray-500">
-                              <span className="font-semibold">Click to upload</span> or drag and drop
-                            </p>
-                            <p className="text-xs text-gray-500">PNG, JPG or WEBP (MAX. 2MB)</p>
-                          </div>
-                          <input
-                            id="main-image-upload"
-                            type="file"
-                            className="hidden"
-                            accept="image/*"
-                            onChange={(e) => handleImageUpload(e, "main")}
-                          />
-                        </label>
-                      </div>
-                    </div>
-                  </div>
+                  <ProjectMediaManager
+                    mainImage={mainImage}
+                    galleryImages={galleryImages}
+                    onMainImageChange={(image) => {
+                      setMainImage(image)
+                      setHasUnsavedChanges(true)
+                    }}
+                    onGalleryImagesChange={(images) => {
+                      setGalleryImages(images)
+                      setHasUnsavedChanges(true)
+                    }}
+                  />
+                </CardContent>
+              </Card>
+            </TabsContent>
 
-                  <Separator />
-
-                  <div className="space-y-4">
-                    <FormLabel>Gallery Images</FormLabel>
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                      {galleryImages.map((image, index) => (
-                        <div key={index} className="relative rounded-md border overflow-hidden h-[150px]">
-                          <Image
-                            src={image || "/placeholder.svg"}
-                            alt={`Gallery image ${index + 1}`}
-                            fill
-                            className="object-cover"
-                          />
-                          <Button
-                            type="button"
-                            variant="destructive"
-                            size="icon"
-                            className="absolute top-2 right-2"
-                            onClick={() => removeGalleryImage(index)}
-                          >
-                            <X className="h-4 w-4" />
-                            <span className="sr-only">Remove</span>
-                          </Button>
-                        </div>
-                      ))}
-                    </div>
-                    <div className="flex items-center justify-center w-full">
-                      <label
-                        htmlFor="gallery-image-upload"
-                        className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100"
-                      >
-                        <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                          <Upload className="w-8 h-8 mb-3 text-gray-500" />
-                          <p className="mb-2 text-sm text-gray-500">
-                            <span className="font-semibold">Click to upload</span> or drag and drop
-                          </p>
-                          <p className="text-xs text-gray-500">PNG, JPG or WEBP (MAX. 2MB)</p>
-                        </div>
-                        <input
-                          id="gallery-image-upload"
-                          type="file"
-                          className="hidden"
-                          accept="image/*"
-                          multiple
-                          onChange={(e) => handleImageUpload(e, "gallery")}
-                        />
-                      </label>
-                    </div>
-                  </div>
+            <TabsContent value="related" className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Related Projects</CardTitle>
+                  <CardDescription>Select projects that are related to this one.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <ProjectRelatedSelector
+                    selectedProjects={relatedProjects}
+                    onChange={handleRelatedProjectsChange}
+                    currentProjectId={projectId}
+                  />
                 </CardContent>
               </Card>
             </TabsContent>
@@ -738,12 +774,33 @@ export default function ProjectEditPage({ params }: { params: { id: string } }) 
                 <CardContent className="space-y-6">
                   <FormField
                     control={form.control}
+                    name="featured"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                        <div className="space-y-0.5">
+                          <FormLabel className="text-base">Featured Project</FormLabel>
+                          <FormDescription>
+                            Featured projects will be displayed prominently on the website.
+                          </FormDescription>
+                        </div>
+                        <FormControl>
+                          <Switch checked={field.value} onCheckedChange={field.onChange} />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
                     name="published"
                     render={({ field }) => (
                       <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                         <div className="space-y-0.5">
                           <FormLabel className="text-base">Published</FormLabel>
-                          <FormDescription>Make this project visible on the website.</FormDescription>
+                          <FormDescription>
+                            Published projects are visible on the website. Unpublished projects are only visible in the
+                            admin dashboard.
+                          </FormDescription>
                         </div>
                         <FormControl>
                           <Switch checked={field.value} onCheckedChange={field.onChange} />
@@ -755,17 +812,151 @@ export default function ProjectEditPage({ params }: { params: { id: string } }) 
               </Card>
             </TabsContent>
           </Tabs>
-
-          <div className="flex justify-end gap-2">
-            <Button variant="outline" asChild>
-              <Link href="/admin/projects">Cancel</Link>
-            </Button>
-            <Button type="submit" className="bg-green-700 hover:bg-green-800" disabled={isSubmitting}>
-              {isSubmitting ? "Saving..." : isNew ? "Create Project" : "Update Project"}
-            </Button>
-          </div>
         </form>
       </Form>
+
+      {/* Delete Project Dialog */}
+      <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete Project</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete this project? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={confirmDelete}>
+              Delete
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Preview Dialog */}
+      <Dialog open={isPreviewDialogOpen} onOpenChange={setIsPreviewDialogOpen}>
+        <DialogContent className="max-w-4xl">
+          <DialogHeader>
+            <DialogTitle>Project Preview</DialogTitle>
+          </DialogHeader>
+          <div className="max-h-[70vh] overflow-y-auto">
+            <div className="space-y-4">
+              <div className="relative h-[300px] w-full overflow-hidden rounded-lg">
+                <Image
+                  src={mainImage || "/placeholder.svg"}
+                  alt={form.getValues("title")}
+                  fill
+                  className="object-cover"
+                />
+                <div className="absolute inset-0 bg-black/40"></div>
+                <div className="absolute bottom-0 left-0 p-6 text-white">
+                  <Badge className="mb-2 bg-green-700">{form.getValues("category")}</Badge>
+                  <h2 className="text-3xl font-bold">{form.getValues("title")}</h2>
+                  <p className="text-sm opacity-90">{form.getValues("location")}</p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+                <div className="col-span-2 space-y-6">
+                  <div>
+                    <h3 className="text-xl font-bold">Overview</h3>
+                    <p className="mt-2 text-muted-foreground">{form.getValues("overview")}</p>
+                  </div>
+
+                  <div>
+                    <h3 className="text-xl font-bold">Challenges</h3>
+                    <p className="mt-2 text-muted-foreground">{form.getValues("challenges")}</p>
+                  </div>
+
+                  <div>
+                    <h3 className="text-xl font-bold">Results</h3>
+                    <p className="mt-2 text-muted-foreground">{form.getValues("results")}</p>
+                  </div>
+
+                  <div>
+                    <h3 className="text-xl font-bold">Gallery</h3>
+                    <div className="mt-2 grid grid-cols-2 gap-4">
+                      {galleryImages.map((image, index) => (
+                        <div key={index} className="relative aspect-video overflow-hidden rounded-lg">
+                          <Image
+                            src={image || "/placeholder.svg"}
+                            alt={`Gallery image ${index + 1}`}
+                            fill
+                            className="object-cover"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <div className="rounded-lg border p-4">
+                    <h3 className="mb-4 text-lg font-bold">Project Details</h3>
+                    <div className="space-y-3">
+                      <div className="flex justify-between border-b pb-2">
+                        <span className="font-medium">Client:</span>
+                        <span>{form.getValues("client")}</span>
+                      </div>
+                      <div className="flex justify-between border-b pb-2">
+                        <span className="font-medium">Location:</span>
+                        <span>{form.getValues("location")}</span>
+                      </div>
+                      <div className="flex justify-between border-b pb-2">
+                        <span className="font-medium">Value:</span>
+                        <span>{form.getValues("value")}</span>
+                      </div>
+                      <div className="flex justify-between border-b pb-2">
+                        <span className="font-medium">Area:</span>
+                        <span>{form.getValues("area")}</span>
+                      </div>
+                      <div className="flex justify-between border-b pb-2">
+                        <span className="font-medium">Status:</span>
+                        <span>{form.getValues("status")}</span>
+                      </div>
+                    </div>
+
+                    <h3 className="mb-2 mt-6 text-lg font-bold">Key Features</h3>
+                    <ul className="space-y-2">
+                      {features.map((feature, index) => (
+                        <li key={index} className="flex items-start">
+                          <span className="mr-2 text-green-700">•</span>
+                          <span>{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button onClick={() => setIsPreviewDialogOpen(false)}>Close Preview</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Unsaved Changes Dialog */}
+      <Dialog open={isUnsavedChangesDialogOpen} onOpenChange={setIsUnsavedChangesDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Unsaved Changes</DialogTitle>
+            <DialogDescription>
+              You have unsaved changes. Are you sure you want to leave this page? Your changes will be lost.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsUnsavedChangesDialogOpen(false)}>
+              Continue Editing
+            </Button>
+            <Button variant="destructive" onClick={confirmCancel}>
+              Discard Changes
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
