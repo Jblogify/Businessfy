@@ -303,7 +303,7 @@ export default function ProjectsPage() {
               <Button variant="outline" className="mr-2">
                 Previous
               </Button>
-              <Button variant="outline" className="bg-green-700 text-white hover:bg-green-800">
+              <Button variant="outline" className="bg-business-600 text-white hover:bg-business-700">
                 1
               </Button>
               <Button variant="outline" className="ml-2">
@@ -325,7 +325,7 @@ function ProjectCard({ project }: { project: any }) {
         <div
           className={cn(
             "absolute top-4 right-4 z-10 rounded-full px-3 py-1 text-xs font-semibold",
-            project.status === "Completed" ? "bg-green-100 text-green-800" : "bg-blue-100 text-blue-800",
+            project.status === "Completed" ? "bg-green-100 text-green-800" : "bg-business-100 text-business-800",
           )}
         >
           {project.status}
@@ -337,7 +337,7 @@ function ProjectCard({ project }: { project: any }) {
       <CardContent className="p-6">
         <div className="mb-4 flex items-center justify-between">
           <span className="text-sm text-muted-foreground">{project.category}</span>
-          <span className="text-sm font-medium text-green-700">{project.value}</span>
+          <span className="text-sm font-medium text-business-600">{project.value}</span>
         </div>
         <h3 className="mb-2 text-xl font-semibold">{project.title}</h3>
         <div className="mb-4 flex items-center text-sm text-muted-foreground">
@@ -347,7 +347,7 @@ function ProjectCard({ project }: { project: any }) {
         </div>
         <p className="mb-4 text-muted-foreground">{project.description}</p>
         <div className="flex gap-2">
-          <Button asChild className="flex-1 bg-green-700 hover:bg-green-800">
+          <Button asChild className="flex-1 bg-business-600 hover:bg-business-700">
             <Link href={`/projects/${project.id}`}>View Details</Link>
           </Button>
           <ProjectEditButton projectId={project.id} />
