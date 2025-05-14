@@ -7,7 +7,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { cn } from "@/lib/utils"
 
 export function ThemeSwitcher({ className }: { className?: string }) {
-  const { colorTheme, availableThemes, applyTheme } = useColorTheme()
+  const { colorTheme, availableThemes, applyTheme, isThemeDark } = useColorTheme()
 
   return (
     <DropdownMenu>
@@ -18,24 +18,26 @@ export function ThemeSwitcher({ className }: { className?: string }) {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        {availableThemes.map((theme) => (
-          <DropdownMenuItem
-            key={theme.id}
-            onClick={() => applyTheme(theme.id)}
-            className="flex items-center justify-between"
-          >
-            <div className="flex items-center gap-2">
-              <div
-                className="h-4 w-4 rounded-full"
-                style={{
-                  backgroundColor: `hsl(${theme.colors.primary})`,
-                }}
-              />
-              {theme.name}
-            </div>
-            {colorTheme === theme.id && <Check className="h-4 w-4" />}
-          </DropdownMenuItem>
-        ))}
+        {availableThemes
+          .filter((theme) => !theme.industry) // Only show general themes in the quick switcher
+          .map((theme) => (
+            <DropdownMenuItem
+              key={theme.id}
+              onClick={() => applyTheme(theme.id)}
+              className="flex items-center justify-between"
+            >
+              <div className="flex items-center gap-2">
+                <div
+                  className="h-4 w-4 rounded-full"
+                  style={{
+                    backgroundColor: `hsl(${theme.colors.primary})`,
+                  }}
+                />
+                <span className={theme.isDark ? "text-white" : ""}>{theme.name}</span>
+              </div>
+              {colorTheme === theme.id && <Check className="h-4 w-4" />}
+            </DropdownMenuItem>
+          ))}
       </DropdownMenuContent>
     </DropdownMenu>
   )

@@ -19,52 +19,59 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 // Define color themes
 const colorThemes = [
   {
-    name: "Green (Default)",
-    primary: "#15803d", // green-700
-    secondary: "#dcfce7", // green-100
-    accent: "#22c55e", // green-500
-  },
-  {
-    name: "Blue",
-    primary: "#1d4ed8", // blue-700
+    name: "Blue (Default)",
+    primary: "#3b82f6", // blue-500
     secondary: "#dbeafe", // blue-100
     accent: "#3b82f6", // blue-500
+    isDark: false,
+  },
+  {
+    name: "Green",
+    primary: "#22c55e", // green-500
+    secondary: "#dcfce7", // green-100
+    accent: "#22c55e", // green-500
+    isDark: false,
   },
   {
     name: "Purple",
-    primary: "#7e22ce", // purple-700
+    primary: "#a855f7", // purple-500
     secondary: "#f3e8ff", // purple-100
     accent: "#a855f7", // purple-500
+    isDark: false,
   },
   {
     name: "Red",
-    primary: "#b91c1c", // red-700
+    primary: "#ef4444", // red-500
     secondary: "#fee2e2", // red-100
     accent: "#ef4444", // red-500
+    isDark: false,
   },
   {
     name: "Orange",
-    primary: "#c2410c", // orange-700
+    primary: "#f97316", // orange-500
     secondary: "#ffedd5", // orange-100
     accent: "#f97316", // orange-500
+    isDark: false,
   },
   {
-    name: "Teal",
-    primary: "#0f766e", // teal-700
-    secondary: "#ccfbf1", // teal-100
-    accent: "#14b8a6", // teal-500
+    name: "Dark Blue",
+    primary: "#3b82f6", // blue-500
+    secondary: "#1e3a8a", // blue-900
+    accent: "#3b82f6", // blue-500
+    isDark: true,
   },
 ]
 
 export function AppearanceSettings() {
   const { toast } = useToast()
   const { theme, setTheme } = useTheme()
-  const { colorTheme, availableThemes, themesByIndustry, applyTheme, getThemeById } = useColorTheme()
+  const { colorTheme, availableThemes, themesByIndustry, applyTheme, getThemeById, isThemeDark } = useColorTheme()
   const [isLoading, setIsLoading] = useState(false)
   const [selectedColorTheme, setSelectedColorTheme] = useState(0)
-  const [customPrimaryColor, setCustomPrimaryColor] = useState("#15803d")
-  const [customSecondaryColor, setCustomSecondaryColor] = useState("#dcfce7")
-  const [customAccentColor, setCustomAccentColor] = useState("#22c55e")
+  const [customPrimaryColor, setCustomPrimaryColor] = useState("#3b82f6") // Default to blue
+  const [customSecondaryColor, setCustomSecondaryColor] = useState("#dbeafe") // Default to light blue
+  const [customAccentColor, setCustomAccentColor] = useState("#3b82f6") // Default to blue
+  const [customIsDark, setCustomIsDark] = useState(false)
   const [fontSize, setFontSize] = useState(16)
   const [borderRadius, setBorderRadius] = useState(8)
   const [activeTab, setActiveTab] = useState("theme")
@@ -74,6 +81,7 @@ export function AppearanceSettings() {
         primary: string
         secondary: string
         accent: string
+        isDark: boolean
       }
     | undefined
   >(undefined)
@@ -97,17 +105,19 @@ export function AppearanceSettings() {
     setIsLoading(true)
 
     // Get the selected theme colors
-    let primary, secondary, accent
+    let primary, secondary, accent, isDark
     if (selectedColorTheme === colorThemes.length) {
       // Custom theme
       primary = customPrimaryColor
       secondary = customSecondaryColor
       accent = customAccentColor
+      isDark = customIsDark
     } else {
       // Predefined theme
       primary = colorThemes[selectedColorTheme].primary
       secondary = colorThemes[selectedColorTheme].secondary
       accent = colorThemes[selectedColorTheme].accent
+      isDark = colorThemes[selectedColorTheme].isDark
     }
 
     // Update CSS variables
@@ -115,6 +125,14 @@ export function AppearanceSettings() {
     document.documentElement.style.setProperty("--primary-foreground", "#ffffff")
     document.documentElement.style.setProperty("--secondary", secondary)
     document.documentElement.style.setProperty("--accent", accent)
+
+    // Adjust text colors for dark themes
+    if (isDark) {
+      document.documentElement.style.setProperty("--secondary-foreground", "210 40% 98%")
+    } else {
+      document.documentElement.style.setProperty("--secondary-foreground", "222.2 47.4% 11.2%")
+    }
+
     document.documentElement.style.setProperty("--font-size-base", `${fontSize}px`)
     document.documentElement.style.setProperty("--radius", `${borderRadius}px`)
 
@@ -130,18 +148,20 @@ export function AppearanceSettings() {
 
   // Reset to default theme
   const resetToDefault = () => {
-    setSelectedColorTheme(0)
-    setCustomPrimaryColor("#15803d")
-    setCustomSecondaryColor("#dcfce7")
-    setCustomAccentColor("#22c55e")
+    setSelectedColorTheme(0) // Blue is now the default (index 0)
+    setCustomPrimaryColor("#3b82f6")
+    setCustomSecondaryColor("#dbeafe")
+    setCustomAccentColor("#3b82f6")
+    setCustomIsDark(false)
     setFontSize(16)
     setBorderRadius(8)
 
-    // Reset CSS variables
-    document.documentElement.style.removeProperty("--primary")
-    document.documentElement.style.removeProperty("--primary-foreground")
-    document.documentElement.style.removeProperty("--secondary")
-    document.documentElement.style.removeProperty("--accent")
+    // Reset CSS variables to blue theme
+    document.documentElement.style.setProperty("--primary", "217 91% 60%")
+    document.documentElement.style.setProperty("--primary-foreground", "210 40% 98%")
+    document.documentElement.style.setProperty("--secondary", "221 83% 95%")
+    document.documentElement.style.setProperty("--secondary-foreground", "222.2 47.4% 11.2%")
+    document.documentElement.style.setProperty("--accent", "217 91% 60%")
     document.documentElement.style.removeProperty("--font-size-base")
     document.documentElement.style.removeProperty("--radius")
 
@@ -171,7 +191,7 @@ export function AppearanceSettings() {
             <div className="grid grid-cols-3 gap-4">
               <div
                 className={`flex cursor-pointer flex-col items-center justify-center rounded-md border p-4 ${
-                  theme === "light" ? "border-green-700 bg-green-50" : "border-muted bg-transparent"
+                  theme === "light" ? "border-primary bg-primary/5" : "border-muted bg-transparent"
                 }`}
                 onClick={() => setTheme("light")}
               >
@@ -179,11 +199,11 @@ export function AppearanceSettings() {
                   <Sun className="h-5 w-5 text-yellow-500" />
                 </div>
                 <span className="text-sm font-medium">Light</span>
-                {theme === "light" && <Check className="mt-2 h-4 w-4 text-green-700" />}
+                {theme === "light" && <Check className="mt-2 h-4 w-4 text-primary" />}
               </div>
               <div
                 className={`flex cursor-pointer flex-col items-center justify-center rounded-md border p-4 ${
-                  theme === "dark" ? "border-green-700 bg-green-950" : "border-muted bg-transparent"
+                  theme === "dark" ? "border-primary bg-primary/5" : "border-muted bg-transparent"
                 }`}
                 onClick={() => setTheme("dark")}
               >
@@ -191,11 +211,11 @@ export function AppearanceSettings() {
                   <Moon className="h-5 w-5 text-gray-300" />
                 </div>
                 <span className={`text-sm font-medium ${theme === "dark" ? "text-white" : ""}`}>Dark</span>
-                {theme === "dark" && <Check className="mt-2 h-4 w-4 text-green-400" />}
+                {theme === "dark" && <Check className="mt-2 h-4 w-4 text-primary" />}
               </div>
               <div
                 className={`flex cursor-pointer flex-col items-center justify-center rounded-md border p-4 ${
-                  theme === "system" ? "border-green-700 bg-green-50 dark:bg-green-950" : "border-muted bg-transparent"
+                  theme === "system" ? "border-primary bg-primary/5" : "border-muted bg-transparent"
                 }`}
                 onClick={() => setTheme("system")}
               >
@@ -203,7 +223,7 @@ export function AppearanceSettings() {
                   <Monitor className="h-5 w-5 text-blue-500" />
                 </div>
                 <span className="text-sm font-medium">System</span>
-                {theme === "system" && <Check className="mt-2 h-4 w-4 text-green-700 dark:text-green-400" />}
+                {theme === "system" && <Check className="mt-2 h-4 w-4 text-primary" />}
               </div>
             </div>
             <p className="text-sm text-muted-foreground">
@@ -222,7 +242,7 @@ export function AppearanceSettings() {
                     key={theme.id}
                     className={`relative cursor-pointer rounded-md border p-4 transition-all hover:border-primary ${
                       colorTheme === theme.id ? "border-primary bg-primary/5" : "border-border"
-                    }`}
+                    } ${theme.isDark ? "bg-gray-900" : ""}`}
                     onClick={() => {
                       applyTheme(theme.id)
                       setPreviewTheme(theme.id)
@@ -230,8 +250,10 @@ export function AppearanceSettings() {
                     }}
                   >
                     <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium">{theme.name}</span>
-                      {colorTheme === theme.id && <Check className="h-4 w-4 text-primary" />}
+                      <span className={`text-sm font-medium ${theme.isDark ? "text-white" : ""}`}>{theme.name}</span>
+                      {colorTheme === theme.id && (
+                        <Check className={`h-4 w-4 ${theme.isDark ? "text-white" : "text-primary"}`} />
+                      )}
                     </div>
                     <div className="mt-2 flex space-x-2">
                       <div
@@ -303,23 +325,32 @@ export function AppearanceSettings() {
                             previewTheme === theme.id && !previewCustomColors
                               ? "border-primary bg-primary/5"
                               : "border-border"
-                          }`}
+                          } ${theme.isDark ? "bg-gray-900" : ""}`}
                           onClick={() => {
                             setPreviewTheme(theme.id)
                             setPreviewCustomColors(undefined)
                           }}
                         >
                           <div className="flex items-center justify-between">
-                            <span className="text-sm font-medium">{theme.name}</span>
-                            {colorTheme === theme.id && <Check className="h-4 w-4 text-primary" />}
+                            <span className={`text-sm font-medium ${theme.isDark ? "text-white" : ""}`}>
+                              {theme.name}
+                            </span>
+                            {colorTheme === theme.id && (
+                              <Check className={`h-4 w-4 ${theme.isDark ? "text-white" : "text-primary"}`} />
+                            )}
                           </div>
                           {theme.industry && (
-                            <Badge variant="outline" className="mt-1">
+                            <Badge
+                              variant="outline"
+                              className={`mt-1 ${theme.isDark ? "border-gray-700 text-white" : ""}`}
+                            >
                               {theme.industry}
                             </Badge>
                           )}
                           {theme.description && (
-                            <p className="mt-2 text-xs text-muted-foreground">{theme.description}</p>
+                            <p className={`mt-2 text-xs ${theme.isDark ? "text-gray-300" : "text-muted-foreground"}`}>
+                              {theme.description}
+                            </p>
                           )}
                           <div className="mt-2 flex space-x-2">
                             <div
@@ -380,11 +411,15 @@ export function AppearanceSettings() {
                   <RadioGroupItem value={index.toString()} id={`theme-${index}`} className="peer sr-only" />
                   <Label
                     htmlFor={`theme-${index}`}
-                    className="flex cursor-pointer flex-col space-y-2 rounded-md border p-4 hover:bg-muted peer-data-[state=checked]:border-green-700 peer-data-[state=checked]:bg-green-50 dark:peer-data-[state=checked]:bg-green-950"
+                    className={`flex cursor-pointer flex-col space-y-2 rounded-md border p-4 hover:bg-muted peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary/5 ${
+                      theme.isDark ? "bg-gray-900" : ""
+                    }`}
                   >
                     <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium">{theme.name}</span>
-                      {selectedColorTheme === index && <Check className="h-4 w-4 text-green-700 dark:text-green-400" />}
+                      <span className={`text-sm font-medium ${theme.isDark ? "text-white" : ""}`}>{theme.name}</span>
+                      {selectedColorTheme === index && (
+                        <Check className={`h-4 w-4 ${theme.isDark ? "text-white" : "text-primary"}`} />
+                      )}
                     </div>
                     <div className="flex space-x-2">
                       <div className="h-6 w-6 rounded-full" style={{ backgroundColor: theme.primary }}></div>
@@ -398,12 +433,14 @@ export function AppearanceSettings() {
                 <RadioGroupItem value={colorThemes.length.toString()} id={`theme-custom`} className="peer sr-only" />
                 <Label
                   htmlFor={`theme-custom`}
-                  className="flex cursor-pointer flex-col space-y-2 rounded-md border p-4 hover:bg-muted peer-data-[state=checked]:border-green-700 peer-data-[state=checked]:bg-green-50 dark:peer-data-[state=checked]:bg-green-950"
+                  className={`flex cursor-pointer flex-col space-y-2 rounded-md border p-4 hover:bg-muted peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary/5 ${
+                    customIsDark ? "bg-gray-900" : ""
+                  }`}
                 >
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">Custom</span>
+                    <span className={`text-sm font-medium ${customIsDark ? "text-white" : ""}`}>Custom</span>
                     {selectedColorTheme === colorThemes.length && (
-                      <Check className="h-4 w-4 text-green-700 dark:text-green-400" />
+                      <Check className={`h-4 w-4 ${customIsDark ? "text-white" : "text-primary"}`} />
                     )}
                   </div>
                   <div className="flex space-x-2">
@@ -416,9 +453,9 @@ export function AppearanceSettings() {
             </RadioGroup>
 
             {selectedColorTheme === colorThemes.length && (
-              <div className="space-y-4 rounded-md border p-4">
+              <div className={`space-y-4 rounded-md border p-4 ${customIsDark ? "bg-gray-900" : ""}`}>
                 <div className="space-y-2">
-                  <Label>Primary Color</Label>
+                  <Label className={customIsDark ? "text-white" : ""}>Primary Color</Label>
                   <div className="flex space-x-4">
                     <HexColorPicker color={customPrimaryColor} onChange={setCustomPrimaryColor} />
                     <div className="flex flex-col space-y-2">
@@ -426,13 +463,13 @@ export function AppearanceSettings() {
                       <Input
                         value={customPrimaryColor}
                         onChange={(e) => setCustomPrimaryColor(e.target.value)}
-                        className="w-24"
+                        className={`w-24 ${customIsDark ? "bg-gray-800 text-white border-gray-700" : ""}`}
                       />
                     </div>
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label>Secondary Color</Label>
+                  <Label className={customIsDark ? "text-white" : ""}>Secondary Color</Label>
                   <div className="flex space-x-4">
                     <HexColorPicker color={customSecondaryColor} onChange={setCustomSecondaryColor} />
                     <div className="flex flex-col space-y-2">
@@ -440,13 +477,13 @@ export function AppearanceSettings() {
                       <Input
                         value={customSecondaryColor}
                         onChange={(e) => setCustomSecondaryColor(e.target.value)}
-                        className="w-24"
+                        className={`w-24 ${customIsDark ? "bg-gray-800 text-white border-gray-700" : ""}`}
                       />
                     </div>
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label>Accent Color</Label>
+                  <Label className={customIsDark ? "text-white" : ""}>Accent Color</Label>
                   <div className="flex space-x-4">
                     <HexColorPicker color={customAccentColor} onChange={setCustomAccentColor} />
                     <div className="flex flex-col space-y-2">
@@ -454,10 +491,22 @@ export function AppearanceSettings() {
                       <Input
                         value={customAccentColor}
                         onChange={(e) => setCustomAccentColor(e.target.value)}
-                        className="w-24"
+                        className={`w-24 ${customIsDark ? "bg-gray-800 text-white border-gray-700" : ""}`}
                       />
                     </div>
                   </div>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    id="is-dark-theme"
+                    checked={customIsDark}
+                    onChange={(e) => setCustomIsDark(e.target.checked)}
+                    className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                  />
+                  <Label htmlFor="is-dark-theme" className={customIsDark ? "text-white" : ""}>
+                    This is a dark theme (will adjust text colors accordingly)
+                  </Label>
                 </div>
               </div>
             )}
@@ -501,9 +550,7 @@ export function AppearanceSettings() {
                   This is a sample paragraph to preview your typography settings.
                 </p>
                 <div className="flex space-x-2">
-                  <Button className="bg-green-700 hover:bg-green-800" style={{ borderRadius: `${borderRadius}px` }}>
-                    Primary Button
-                  </Button>
+                  <Button style={{ borderRadius: `${borderRadius}px` }}>Primary Button</Button>
                   <Button variant="outline" style={{ borderRadius: `${borderRadius}px` }}>
                     Secondary Button
                   </Button>
@@ -515,7 +562,7 @@ export function AppearanceSettings() {
       </Tabs>
 
       <div className="flex space-x-2">
-        <Button onClick={applyThemeChanges} disabled={isLoading} className="bg-green-700 hover:bg-green-800">
+        <Button onClick={applyThemeChanges} disabled={isLoading}>
           {isLoading ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />

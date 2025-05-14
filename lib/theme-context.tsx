@@ -9,6 +9,7 @@ type ColorTheme = {
   id: string
   industry?: string
   description?: string
+  isDark?: boolean
   colors: {
     primary: string
     secondary: string
@@ -24,8 +25,8 @@ const generalThemes: ColorTheme[] = [
     description: "Professional and trustworthy, suitable for most businesses",
     colors: {
       primary: "217 91% 60%",
-      secondary: "172 66% 50%",
-      accent: "172 66% 50%",
+      secondary: "221 83% 95%",
+      accent: "217 91% 60%",
     },
   },
   {
@@ -68,6 +69,28 @@ const generalThemes: ColorTheme[] = [
       accent: "0 84% 60%",
     },
   },
+  {
+    name: "Dark Blue",
+    id: "dark-blue",
+    isDark: true,
+    description: "Elegant and professional, perfect for a sophisticated look",
+    colors: {
+      primary: "217 91% 60%",
+      secondary: "217 91% 15%",
+      accent: "217 91% 60%",
+    },
+  },
+  {
+    name: "Dark Green",
+    id: "dark-green",
+    isDark: true,
+    description: "Rich and natural, ideal for premium eco-friendly brands",
+    colors: {
+      primary: "142 76% 36%",
+      secondary: "142 76% 15%",
+      accent: "142 71% 45%",
+    },
+  },
 ]
 
 // Finance industry themes
@@ -103,6 +126,18 @@ const financeThemes: ColorTheme[] = [
       primary: "220 14% 40%",
       secondary: "220 14% 96%",
       accent: "220 14% 40%",
+    },
+  },
+  {
+    name: "Dark Finance",
+    id: "finance-dark",
+    industry: "Finance",
+    isDark: true,
+    description: "Sophisticated and premium, ideal for wealth management and private banking",
+    colors: {
+      primary: "221 83% 53%",
+      secondary: "221 83% 15%",
+      accent: "221 83% 53%",
     },
   },
 ]
@@ -142,6 +177,18 @@ const healthcareThemes: ColorTheme[] = [
       accent: "174 100% 29%",
     },
   },
+  {
+    name: "Night Shift",
+    id: "healthcare-dark",
+    industry: "Healthcare",
+    isDark: true,
+    description: "Calm and soothing, ideal for mental health services and night mode applications",
+    colors: {
+      primary: "199 89% 48%",
+      secondary: "199 89% 15%",
+      accent: "199 89% 48%",
+    },
+  },
 ]
 
 // Technology industry themes
@@ -177,6 +224,18 @@ const techThemes: ColorTheme[] = [
       primary: "142 71% 45%",
       secondary: "142 100% 96%",
       accent: "142 71% 45%",
+    },
+  },
+  {
+    name: "Dark Mode",
+    id: "tech-dark",
+    industry: "Technology",
+    isDark: true,
+    description: "Modern and sleek, perfect for developer tools and tech products",
+    colors: {
+      primary: "213 94% 68%",
+      secondary: "213 94% 15%",
+      accent: "213 94% 68%",
     },
   },
 ]
@@ -216,6 +275,18 @@ const educationThemes: ColorTheme[] = [
       accent: "354 70% 54%",
     },
   },
+  {
+    name: "Study Mode",
+    id: "education-dark",
+    industry: "Education",
+    isDark: true,
+    description: "Focused and calm, perfect for night reading and study applications",
+    colors: {
+      primary: "210 100% 56%",
+      secondary: "210 100% 15%",
+      accent: "210 100% 56%",
+    },
+  },
 ]
 
 // Retail & E-commerce industry themes
@@ -253,6 +324,18 @@ const retailThemes: ColorTheme[] = [
       accent: "224 76% 48%",
     },
   },
+  {
+    name: "Night Shopping",
+    id: "retail-dark",
+    industry: "Retail",
+    isDark: true,
+    description: "Elegant and premium, perfect for luxury retail and night mode shopping",
+    colors: {
+      primary: "224 76% 48%",
+      secondary: "224 76% 15%",
+      accent: "224 76% 48%",
+    },
+  },
 ]
 
 // Combine all themes
@@ -283,13 +366,14 @@ type ThemeContextType = {
   applyTheme: (themeId: string) => void
   previewTheme: (themeId: string) => void
   getThemeById: (themeId: string) => ColorTheme | undefined
+  isThemeDark: (themeId: string) => boolean
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const { theme } = useTheme()
-  const [colorTheme, setColorTheme] = useState<string>("blue")
+  const [colorTheme, setColorTheme] = useState<string>("blue") // Default to blue theme
 
   // Apply theme on initial load and when theme changes
   useEffect(() => {
@@ -303,6 +387,12 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     return colorThemes.find((theme) => theme.id === themeId)
   }
 
+  // Check if a theme is dark
+  const isThemeDark = (themeId: string) => {
+    const selectedTheme = getThemeById(themeId)
+    return !!selectedTheme?.isDark
+  }
+
   // Apply theme function
   const applyTheme = (themeId: string) => {
     const selectedTheme = getThemeById(themeId)
@@ -313,6 +403,13 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     document.documentElement.style.setProperty("--primary", selectedTheme.colors.primary)
     document.documentElement.style.setProperty("--secondary", selectedTheme.colors.secondary)
     document.documentElement.style.setProperty("--accent", selectedTheme.colors.accent)
+
+    // Adjust text colors for dark themes
+    if (selectedTheme.isDark) {
+      document.documentElement.style.setProperty("--secondary-foreground", "210 40% 98%")
+    } else {
+      document.documentElement.style.setProperty("--secondary-foreground", "222.2 47.4% 11.2%")
+    }
 
     // Save to localStorage
     localStorage.setItem("businessfy-color-theme", themeId)
@@ -329,6 +426,13 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     document.documentElement.style.setProperty("--primary", selectedTheme.colors.primary)
     document.documentElement.style.setProperty("--secondary", selectedTheme.colors.secondary)
     document.documentElement.style.setProperty("--accent", selectedTheme.colors.accent)
+
+    // Adjust text colors for dark themes
+    if (selectedTheme.isDark) {
+      document.documentElement.style.setProperty("--secondary-foreground", "210 40% 98%")
+    } else {
+      document.documentElement.style.setProperty("--secondary-foreground", "222.2 47.4% 11.2%")
+    }
   }
 
   return (
@@ -341,6 +445,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         applyTheme,
         previewTheme,
         getThemeById,
+        isThemeDark,
       }}
     >
       {children}
