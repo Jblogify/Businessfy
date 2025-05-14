@@ -1,4 +1,14 @@
-import { BarChart3, FileText, ImageIcon, LayoutDashboard, MessageSquare, Settings, Users } from "lucide-react"
+import {
+  BarChart3,
+  FileText,
+  ImageIcon,
+  LayoutDashboard,
+  Menu,
+  MessageSquare,
+  Palette,
+  Settings,
+  Users,
+} from "lucide-react"
 
 export const sidebarItems = [
   {
@@ -17,6 +27,11 @@ export const sidebarItems = [
     icon: ImageIcon,
   },
   {
+    title: "Menu",
+    href: "/admin/menu",
+    icon: Menu,
+  },
+  {
     title: "Users",
     href: "/admin/users",
     icon: Users,
@@ -30,6 +45,11 @@ export const sidebarItems = [
     title: "Analytics",
     href: "/admin/analytics",
     icon: BarChart3,
+  },
+  {
+    title: "Style Guide",
+    href: "/admin/style-guide",
+    icon: Palette,
   },
   {
     title: "Settings",

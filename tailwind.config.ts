@@ -107,10 +107,11 @@ const config = {
         "pulse-glow": "pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
       },
       textShadow: {
-        sm: "0 0 2px var(--tw-shadow-color)",
-        DEFAULT: "0 0 4px var(--tw-shadow-color)",
+        xs: "0 0 1px var(--tw-shadow-color)",
+        sm: "0 0 3px var(--tw-shadow-color)",
+        DEFAULT: "0 0 5px var(--tw-shadow-color)",
         md: "0 0 8px var(--tw-shadow-color)",
-        lg: "0 0 16px var(--tw-shadow-color)",
+        lg: "0 0 12px var(--tw-shadow-color)",
       },
       boxShadow: {
         glow: "0 0 5px var(--tw-shadow-color)",
