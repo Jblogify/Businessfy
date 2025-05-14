@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -13,7 +13,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Edit, Eye, GripVertical, MoreHorizontal, Plus, Search, Trash } from "lucide-react"
+import { Edit, Eye, GripVertical, MoreHorizontal, Plus, Save, Search, Trash } from "lucide-react"
+import { useToast } from "@/hooks/use-toast"
+import { useRouter } from "next/navigation"
 
 // Sample data
 const initialPages = [
@@ -88,14 +90,40 @@ export default function PagesAdmin() {
   const [searchTerm, setSearchTerm] = useState("")
   const [draggedItem, setDraggedItem] = useState(null)
   const [isDragging, setIsDragging] = useState(false)
+  const [hasChanges, setHasChanges] = useState(false)
+  const [isSaving, setIsSaving] = useState(false)
   const dragOverItemRef = useRef(null)
+  const { toast } = useToast()
+  const router = useRouter()
 
   const filteredPages = pages
     .filter((page) => page.title.toLowerCase().includes(searchTerm.toLowerCase()))
     .sort((a, b) => a.order - b.order)
 
+  // Update navigation when page order changes
+  useEffect(() => {
+    if (hasChanges) {
+      // In a real app, this would be persisted to a database
+      // For now, we'll just simulate the update with a local storage save
+      localStorage.setItem(
+        "siteNavigation",
+        JSON.stringify(
+          pages
+            .filter((page) => page.status === "Published")
+            .sort((a, b) => a.order - b.order)
+            .map((page) => ({ href: page.slug, label: page.title })),
+        ),
+      )
+    }
+  }, [pages, hasChanges])
+
   const handleDelete = (id: number) => {
     setPages(pages.filter((page) => page.id !== id))
+    setHasChanges(true)
+    toast({
+      title: "Page deleted",
+      description: "The page has been removed from your site.",
+    })
   }
 
   const handleDragStart = (e, position) => {
@@ -146,6 +174,12 @@ export default function PagesAdmin() {
       })
 
       setPages(updatedPages)
+      setHasChanges(true)
+
+      toast({
+        title: "Page order updated",
+        description: "The navigation order has been updated.",
+      })
     }
 
     setIsDragging(false)
@@ -157,6 +191,28 @@ export default function PagesAdmin() {
     e.preventDefault()
   }
 
+  const saveChanges = async () => {
+    setIsSaving(true)
+
+    // Simulate API call
+    await new Promise((resolve) => setTimeout(resolve, 1000))
+
+    // In a real app, this would save to a database
+    localStorage.setItem("sitePages", JSON.stringify(pages))
+
+    setIsSaving(false)
+    setHasChanges(false)
+
+    toast({
+      title: "Changes saved",
+      description: "Your page changes have been published to the site.",
+    })
+  }
+
+  const handleEdit = (id: number) => {
+    router.push(`/admin/pages/editor/${id}`)
+  }
+
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
@@ -164,10 +220,49 @@ export default function PagesAdmin() {
           <h1 className="text-3xl font-bold tracking-tight">Pages</h1>
           <p className="text-muted-foreground">Manage your website pages</p>
         </div>
-        <Button className="bg-business-600 hover:bg-business-700">
-          <Plus className="mr-2 h-4 w-4" />
-          Add New Page
-        </Button>
+        <div className="flex gap-2">
+          {hasChanges && (
+            <Button onClick={saveChanges} className="bg-business-600 hover:bg-business-700" disabled={isSaving}>
+              {isSaving ? (
+                <>
+                  <svg
+                    className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
+                  </svg>
+                  Saving...
+                </>
+              ) : (
+                <>
+                  <Save className="mr-2 h-4 w-4" />
+                  Save Changes
+                </>
+              )}
+            </Button>
+          )}
+          <Button
+            className="bg-business-600 hover:bg-business-700"
+            onClick={() => router.push("/admin/pages/editor/new")}
+          >
+            <Plus className="mr-2 h-4 w-4" />
+            Add New Page
+          </Button>
+        </div>
       </div>
       <Card>
         <CardHeader>
@@ -214,7 +309,9 @@ export default function PagesAdmin() {
                     onDragEnter={() => handleDragEnter(index)}
                     onDragEnd={handleDragEnd}
                     onDragOver={handleDragOver}
-                    className={`${isDragging && draggedItem === index ? "opacity-50" : "opacity-100"} transition-opacity duration-200`}
+                    className={`${isDragging && draggedItem === index ? "opacity-50" : "opacity-100"} transition-opacity duration-200 ${
+                      isDragging && draggedItem !== index ? "hover:bg-gray-50 dark:hover:bg-gray-900" : ""
+                    }`}
                   >
                     <TableCell>
                       <div className="cursor-grab">
@@ -246,7 +343,7 @@ export default function PagesAdmin() {
                         <DropdownMenuContent align="end">
                           <DropdownMenuLabel>Actions</DropdownMenuLabel>
                           <DropdownMenuSeparator />
-                          <DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleEdit(page.id)}>
                             <Edit className="mr-2 h-4 w-4" />
                             Edit
                           </DropdownMenuItem>
