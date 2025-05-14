@@ -96,14 +96,44 @@ const config = {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
+        "pulse-glow": {
+          "0%, 100%": { opacity: "0.6" },
+          "50%": { opacity: "1" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "pulse-glow": "pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+      },
+      textShadow: {
+        sm: "0 0 2px var(--tw-shadow-color)",
+        DEFAULT: "0 0 4px var(--tw-shadow-color)",
+        md: "0 0 8px var(--tw-shadow-color)",
+        lg: "0 0 16px var(--tw-shadow-color)",
+      },
+      boxShadow: {
+        glow: "0 0 5px var(--tw-shadow-color)",
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [
+    require("tailwindcss-animate"),
+    ({ addUtilities, theme, e }) => {
+      const textShadows = theme("textShadow")
+      const shadowColor = theme("colors")
+
+      const utilities = Object.entries(textShadows).map(([key, value]) => {
+        return {
+          [`.${e(`text-shadow${key === "DEFAULT" ? "" : `-${key}`}`)}`]: {
+            textShadow: value,
+          },
+        }
+      })
+
+      addUtilities(utilities)
+    },
+  ],
 } satisfies Config
 
 export default config

@@ -7,6 +7,7 @@ import { ModeToggle } from "@/components/mode-toggle"
 import { BusinessFyLogo } from "@/components/ui/businessfy-logo"
 import { ThemeSwitcher } from "@/components/theme-switcher"
 import { useMobile } from "@/hooks/use-mobile"
+import { ScrollProgress } from "@/components/scroll-progress"
 
 export function SiteHeader() {
   const [scrolled, setScrolled] = useState(false)
@@ -52,39 +53,42 @@ export function SiteHeader() {
   const logoScale = scrolled ? (isMobile ? "scale-90" : "scale-95") : "scale-100"
 
   return (
-    <header
-      className={`sticky top-0 z-40 w-full border-b border-gray-800 bg-zinc-900 text-white transition-all duration-200 ${headerHeight} ${
-        scrolled ? "shadow-md" : ""
-      }`}
-    >
-      <div className="flex justify-center w-full h-full">
-        <div
-          className={`w-[95%] md:w-[90%] lg:w-[85%] flex items-center justify-between px-4 sm:px-8 h-full transition-all duration-300 bg-zinc-800 rounded-md sm:rounded-lg 
-          ${scrolled ? "opacity-90 rounded-none" : "opacity-100 mt-1"}
-          ${hovered && !scrolled ? "shadow-[0_0_15px_rgba(59,130,246,0.15)] border border-business-900/20" : "border border-transparent"}
-          `}
-          onMouseEnter={() => setHovered(true)}
-          onMouseLeave={() => setHovered(false)}
-        >
-          <div className="flex items-center">
-            <Link href="/" className="flex items-center space-x-2">
-              <BusinessFyLogo
-                size={logoSize}
-                textClassName={`transition-all duration-200 ${isMobile ? "text-lg" : "text-xl"} ${logoScale} ${hovered ? "text-business-400" : ""}`}
-              />
-            </Link>
-          </div>
+    <>
+      <ScrollProgress />
+      <header
+        className={`sticky top-0 z-40 w-full border-b border-gray-800 bg-zinc-900 text-white transition-all duration-200 ${headerHeight} ${
+          scrolled ? "shadow-md" : ""
+        }`}
+      >
+        <div className="flex justify-center w-full h-full">
+          <div
+            className={`w-[95%] md:w-[90%] lg:w-[85%] flex items-center justify-between px-4 sm:px-8 h-full transition-all duration-300 bg-zinc-800 rounded-md sm:rounded-lg 
+            ${scrolled ? "opacity-90 rounded-none" : "opacity-100 mt-1"}
+            ${hovered && !scrolled ? "shadow-[0_0_15px_rgba(59,130,246,0.15)] border border-business-900/20" : "border border-transparent"}
+            `}
+            onMouseEnter={() => setHovered(true)}
+            onMouseLeave={() => setHovered(false)}
+          >
+            <div className="flex items-center">
+              <Link href="/" className="flex items-center space-x-2">
+                <BusinessFyLogo
+                  size={logoSize}
+                  textClassName={`transition-all duration-200 ${isMobile ? "text-lg" : "text-xl"} ${logoScale} ${hovered ? "text-business-400" : ""}`}
+                />
+              </Link>
+            </div>
 
-          <div className="flex-1">
-            <MainNav />
-          </div>
+            <div className="flex-1">
+              <MainNav />
+            </div>
 
-          <div className="flex items-center gap-3 bg-zinc-700/50 p-1.5 rounded-lg backdrop-blur-sm">
-            <ThemeSwitcher className="bg-zinc-600 hover:bg-business-600 hover:text-white text-gray-200 border-none shadow-sm" />
-            <ModeToggle />
+            <div className="flex items-center gap-3 bg-zinc-700/50 p-1.5 rounded-lg backdrop-blur-sm">
+              <ThemeSwitcher className="bg-zinc-600 hover:bg-business-600 hover:text-white text-gray-200 border-none shadow-sm" />
+              <ModeToggle />
+            </div>
           </div>
         </div>
-      </div>
-    </header>
+      </header>
+    </>
   )
 }
