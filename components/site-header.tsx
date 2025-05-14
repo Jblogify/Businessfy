@@ -1,6 +1,8 @@
 import Link from "next/link"
 import { MainNav } from "@/components/main-nav"
 import { ModeToggle } from "@/components/mode-toggle"
+import { BusinessFyLogo } from "@/components/ui/businessfy-logo"
+import { ThemeSwitcher } from "@/components/theme-switcher"
 
 export function SiteHeader() {
   return (
@@ -8,7 +10,7 @@ export function SiteHeader() {
       <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-8">
         <div className="flex items-center">
           <Link href="/" className="flex items-center space-x-2">
-            <span className="text-xl font-bold">BusinessFy</span>
+            <BusinessFyLogo size={28} textClassName="text-xl" />
           </Link>
         </div>
 
@@ -16,7 +18,8 @@ export function SiteHeader() {
           <MainNav />
         </div>
 
-        <div className="flex items-center">
+        <div className="flex items-center gap-2">
+          <ThemeSwitcher />
           <ModeToggle />
         </div>
       </div>

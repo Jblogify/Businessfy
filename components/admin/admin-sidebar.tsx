@@ -11,11 +11,13 @@ import {
   LayoutDashboard,
   LogOut,
   MessageSquare,
+  Palette,
   Settings,
   Users,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import { BusinessFyLogo } from "@/components/ui/businessfy-logo"
 
 const sidebarItems = [
   {
@@ -49,6 +51,11 @@ const sidebarItems = [
     icon: BarChart3,
   },
   {
+    title: "Style Guide",
+    href: "/admin/style-guide",
+    icon: Palette,
+  },
+  {
     title: "Settings",
     href: "/admin/settings",
     icon: Settings,
@@ -59,11 +66,11 @@ export function AdminSidebar() {
   const pathname = usePathname()
 
   return (
-    <div className="flex h-screen w-64 flex-col border-r bg-green-50 dark:bg-green-950">
+    <div className="flex h-screen w-64 flex-col border-r bg-business-50 dark:bg-business-950">
       <div className="flex h-14 items-center border-b px-4">
         <Link href="/admin" className="flex items-center gap-2 font-semibold">
-          <span className="text-xl font-bold text-green-700">Jalal Nasser</span>
-          <span className="text-sm text-green-700">Admin</span>
+          <BusinessFyLogo textClassName="text-business-700 dark:text-business-300" />
+          <span className="text-sm text-business-700 dark:text-business-300">Admin</span>
         </Link>
       </div>
       <ScrollArea className="flex-1 px-3 py-4">
@@ -75,8 +82,8 @@ export function AdminSidebar() {
               className={cn(
                 "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
                 pathname === item.href
-                  ? "bg-green-100 text-green-900 dark:bg-green-900 dark:text-green-50"
-                  : "text-gray-700 hover:bg-green-100 hover:text-green-900 dark:text-gray-300 dark:hover:bg-green-900 dark:hover:text-green-50",
+                  ? "bg-business-100 text-business-900 dark:bg-business-900 dark:text-business-50"
+                  : "text-gray-700 hover:bg-business-100 hover:text-business-900 dark:text-gray-300 dark:hover:bg-business-900 dark:hover:text-business-50",
               )}
             >
               <item.icon className="h-4 w-4" />

@@ -4,6 +4,7 @@ import { useAuth } from "@/lib/auth-context"
 import { Button } from "@/components/ui/button"
 import { ModeToggle } from "@/components/mode-toggle"
 import { Bell, Settings, User } from "lucide-react"
+import { BusinessFyLogo } from "@/components/ui/businessfy-logo"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,6 +13,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { ThemeSwitcher } from "@/components/theme-switcher"
 
 export function AdminHeader() {
   const { user, logout } = useAuth()
@@ -19,11 +21,15 @@ export function AdminHeader() {
   return (
     <header className="border-b bg-white p-4 dark:bg-gray-950">
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold">Admin Dashboard</h1>
+        <div className="flex items-center gap-3">
+          <BusinessFyLogo size={20} />
+          <h1 className="text-xl font-semibold">Admin Dashboard</h1>
+        </div>
         <div className="flex items-center space-x-4">
           <Button variant="ghost" size="icon">
             <Bell className="h-5 w-5" />
           </Button>
+          <ThemeSwitcher />
           <ModeToggle />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>

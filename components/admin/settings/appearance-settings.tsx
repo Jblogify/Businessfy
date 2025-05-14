@@ -1,17 +1,20 @@
 "use client"
 
-import type React from "react"
-
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { useTheme } from "next-themes"
-import { Check, Loader2, Moon, Sun, Monitor } from "lucide-react"
+import { Check, Loader2, Moon, Sun, Monitor, Search } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Slider } from "@/components/ui/slider"
 import { HexColorPicker } from "react-colorful"
+import { useColorTheme } from "@/lib/theme-context"
+import { ThemePreview } from "./theme-preview"
+import { Badge } from "@/components/ui/badge"
+import { Input } from "@/components/ui/input"
+import { ScrollArea } from "@/components/ui/scroll-area"
 
 // Define color themes
 const colorThemes = [
@@ -56,6 +59,7 @@ const colorThemes = [
 export function AppearanceSettings() {
   const { toast } = useToast()
   const { theme, setTheme } = useTheme()
+  const { colorTheme, availableThemes, themesByIndustry, applyTheme, getThemeById } = useColorTheme()
   const [isLoading, setIsLoading] = useState(false)
   const [selectedColorTheme, setSelectedColorTheme] = useState(0)
   const [customPrimaryColor, setCustomPrimaryColor] = useState("#15803d")
@@ -64,6 +68,29 @@ export function AppearanceSettings() {
   const [fontSize, setFontSize] = useState(16)
   const [borderRadius, setBorderRadius] = useState(8)
   const [activeTab, setActiveTab] = useState("theme")
+  const [previewTheme, setPreviewTheme] = useState(colorTheme)
+  const [previewCustomColors, setPreviewCustomColors] = useState<
+    | {
+        primary: string
+        secondary: string
+        accent: string
+      }
+    | undefined
+  >(undefined)
+  const [selectedIndustry, setSelectedIndustry] = useState<string>("General")
+  const [searchQuery, setSearchQuery] = useState("")
+
+  // Filter themes based on search query
+  const filteredThemes = searchQuery
+    ? availableThemes.filter(
+        (theme) =>
+          theme.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          (theme.industry && theme.industry.toLowerCase().includes(searchQuery.toLowerCase())) ||
+          (theme.description && theme.description.toLowerCase().includes(searchQuery.toLowerCase())),
+      )
+    : selectedIndustry === "All"
+      ? availableThemes
+      : themesByIndustry[selectedIndustry] || []
 
   // Apply theme changes
   const applyThemeChanges = () => {
@@ -132,9 +159,11 @@ export function AppearanceSettings() {
       </div>
 
       <Tabs defaultValue="theme" value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="theme">Theme Mode</TabsTrigger>
-          <TabsTrigger value="colors">Colors</TabsTrigger>
+          <TabsTrigger value="colors">Brand Colors</TabsTrigger>
+          <TabsTrigger value="industry">Industry Themes</TabsTrigger>
+          <TabsTrigger value="custom">Custom Colors</TabsTrigger>
           <TabsTrigger value="typography">Typography & UI</TabsTrigger>
         </TabsList>
         <TabsContent value="theme" className="space-y-4">
@@ -184,6 +213,162 @@ export function AppearanceSettings() {
           </div>
         </TabsContent>
         <TabsContent value="colors" className="space-y-4">
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
+              {availableThemes
+                .filter((theme) => !theme.industry)
+                .map((theme) => (
+                  <div
+                    key={theme.id}
+                    className={`relative cursor-pointer rounded-md border p-4 transition-all hover:border-primary ${
+                      colorTheme === theme.id ? "border-primary bg-primary/5" : "border-border"
+                    }`}
+                    onClick={() => {
+                      applyTheme(theme.id)
+                      setPreviewTheme(theme.id)
+                      setPreviewCustomColors(undefined)
+                    }}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium">{theme.name}</span>
+                      {colorTheme === theme.id && <Check className="h-4 w-4 text-primary" />}
+                    </div>
+                    <div className="mt-2 flex space-x-2">
+                      <div
+                        className="h-6 w-6 rounded-full"
+                        style={{ backgroundColor: `hsl(${theme.colors.primary})` }}
+                      ></div>
+                      <div
+                        className="h-6 w-6 rounded-full"
+                        style={{ backgroundColor: `hsl(${theme.colors.secondary})` }}
+                      ></div>
+                      <div
+                        className="h-6 w-6 rounded-full"
+                        style={{ backgroundColor: `hsl(${theme.colors.accent})` }}
+                      ></div>
+                    </div>
+                  </div>
+                ))}
+            </div>
+            <p className="text-sm text-muted-foreground">
+              Select a color theme to apply it to the entire application. The theme will be applied to all pages and
+              components.
+            </p>
+          </div>
+        </TabsContent>
+        <TabsContent value="industry" className="space-y-4">
+          <div className="space-y-4">
+            <div className="flex flex-col space-y-4">
+              <div className="flex items-center space-x-2">
+                <div className="relative flex-1">
+                  <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Search themes..."
+                    className="pl-8"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Label htmlFor="industry-select" className="whitespace-nowrap">
+                    Industry:
+                  </Label>
+                  <select
+                    id="industry-select"
+                    className="h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                    value={selectedIndustry}
+                    onChange={(e) => {
+                      setSelectedIndustry(e.target.value)
+                      setSearchQuery("")
+                    }}
+                  >
+                    <option value="All">All Industries</option>
+                    {Object.keys(themesByIndustry).map((industry) => (
+                      <option key={industry} value={industry}>
+                        {industry}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                <ScrollArea className="h-[400px] rounded-md border p-4">
+                  <div className="grid grid-cols-1 gap-4">
+                    {filteredThemes.length > 0 ? (
+                      filteredThemes.map((theme) => (
+                        <div
+                          key={theme.id}
+                          className={`relative cursor-pointer rounded-md border p-4 transition-all hover:border-primary ${
+                            previewTheme === theme.id && !previewCustomColors
+                              ? "border-primary bg-primary/5"
+                              : "border-border"
+                          }`}
+                          onClick={() => {
+                            setPreviewTheme(theme.id)
+                            setPreviewCustomColors(undefined)
+                          }}
+                        >
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm font-medium">{theme.name}</span>
+                            {colorTheme === theme.id && <Check className="h-4 w-4 text-primary" />}
+                          </div>
+                          {theme.industry && (
+                            <Badge variant="outline" className="mt-1">
+                              {theme.industry}
+                            </Badge>
+                          )}
+                          {theme.description && (
+                            <p className="mt-2 text-xs text-muted-foreground">{theme.description}</p>
+                          )}
+                          <div className="mt-2 flex space-x-2">
+                            <div
+                              className="h-6 w-6 rounded-full"
+                              style={{ backgroundColor: `hsl(${theme.colors.primary})` }}
+                            ></div>
+                            <div
+                              className="h-6 w-6 rounded-full"
+                              style={{ backgroundColor: `hsl(${theme.colors.secondary})` }}
+                            ></div>
+                            <div
+                              className="h-6 w-6 rounded-full"
+                              style={{ backgroundColor: `hsl(${theme.colors.accent})` }}
+                            ></div>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="flex h-full flex-col items-center justify-center py-8 text-center">
+                        <p className="text-sm text-muted-foreground">No themes found matching your criteria.</p>
+                      </div>
+                    )}
+                  </div>
+                </ScrollArea>
+
+                <div className="flex flex-col space-y-4">
+                  <div className="rounded-md border">
+                    <ThemePreview themeId={previewTheme} customColors={previewCustomColors} />
+                  </div>
+                  <Button
+                    onClick={() => {
+                      applyTheme(previewTheme)
+                      toast({
+                        title: "Theme applied",
+                        description: `The ${
+                          getThemeById(previewTheme)?.name || "selected"
+                        } theme has been applied successfully.`,
+                      })
+                    }}
+                    disabled={previewTheme === colorTheme}
+                  >
+                    Apply This Theme
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </TabsContent>
+        <TabsContent value="custom" className="space-y-4">
           <div className="space-y-4">
             <RadioGroup
               value={selectedColorTheme.toString()}
@@ -345,15 +530,5 @@ export function AppearanceSettings() {
         </Button>
       </div>
     </div>
-  )
-}
-
-// Helper component for the custom color picker
-function Input({ className, ...props }: React.InputHTMLAttributes<HTMLInputElement>) {
-  return (
-    <input
-      className={`flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
-      {...props}
-    />
   )
 }
