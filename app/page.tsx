@@ -30,14 +30,14 @@ export default function Home() {
               sectors.
             </p>
             <div className="flex flex-col space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0">
-              <Button asChild size="lg" className="bg-green-700 hover:bg-green-800">
+              <Button asChild size="lg" className="bg-business-600 hover:bg-business-700">
                 <Link href="/about">Learn More</Link>
               </Button>
               <Button
                 asChild
                 variant="outline"
                 size="lg"
-                className="border-white text-white hover:bg-white hover:text-green-900"
+                className="border-white text-white hover:bg-white hover:text-business-900"
               >
                 <Link href="/contact">Contact Us</Link>
               </Button>
@@ -50,7 +50,7 @@ export default function Home() {
           <div className="container">
             <div className="grid gap-12 md:grid-cols-2">
               <div className="flex flex-col justify-center">
-                <h2 className="mb-6 text-3xl font-bold text-green-800 md:text-4xl">About BusinessFy</h2>
+                <h2 className="mb-6 text-3xl font-bold text-business-700 md:text-4xl">About BusinessFy</h2>
                 <p className="mb-4 text-gray-700">
                   Founded in 1995, BusinessFy has grown to become one of the most respected companies in Saudi Arabia.
                   With a commitment to excellence and innovation, we have successfully completed numerous projects
@@ -61,7 +61,7 @@ export default function Home() {
                   unique needs of our clients. We pride ourselves on our ability to combine traditional values with
                   modern approaches.
                 </p>
-                <Button asChild className="w-fit bg-green-700 hover:bg-green-800">
+                <Button asChild className="w-fit bg-business-600 hover:bg-business-700">
                   <Link href="/about" className="flex items-center">
                     Read More <ArrowRight className="ml-2 h-4 w-4" />
                   </Link>
@@ -84,7 +84,7 @@ export default function Home() {
         <section className="bg-gray-50 py-16 md:py-24">
           <div className="container">
             <div className="mb-12 text-center">
-              <h2 className="mb-4 text-3xl font-bold text-green-800 md:text-4xl">Our Services</h2>
+              <h2 className="mb-4 text-3xl font-bold text-business-700 md:text-4xl">Our Services</h2>
               <p className="mx-auto max-w-3xl text-gray-700">
                 We offer a comprehensive range of services designed to meet the diverse needs of our clients across
                 various sectors.
@@ -129,14 +129,14 @@ export default function Home() {
               ].map((service, index) => (
                 <Card key={index} className="overflow-hidden transition-all hover:shadow-lg">
                   <CardContent className="p-6">
-                    <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-green-100 text-green-700">
+                    <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-business-100 text-business-600">
                       <service.icon className="h-6 w-6" />
                     </div>
                     <h3 className="mb-2 text-xl font-semibold">{service.title}</h3>
                     <p className="mb-4 text-gray-700">{service.description}</p>
                     <Link
                       href={`/services/${service.title.toLowerCase()}`}
-                      className="inline-flex items-center text-green-700 hover:text-green-800"
+                      className="inline-flex items-center text-business-600 hover:text-business-700"
                     >
                       Learn More <ArrowRight className="ml-1 h-4 w-4" />
                     </Link>
@@ -151,7 +151,7 @@ export default function Home() {
         <section className="py-16 md:py-24">
           <div className="container">
             <div className="mb-12 text-center">
-              <h2 className="mb-4 text-3xl font-bold text-green-800 md:text-4xl">Featured Projects</h2>
+              <h2 className="mb-4 text-3xl font-bold text-business-700 md:text-4xl">Featured Projects</h2>
               <p className="mx-auto max-w-3xl text-gray-700">
                 Explore some of our most significant projects that showcase our expertise and commitment to excellence.
               </p>
@@ -189,7 +189,7 @@ export default function Home() {
                     <p className="mb-4 text-gray-700">Location: {project.location}</p>
                     <Link
                       href={`/projects/${project.title.toLowerCase().replace(/\s+/g, "-")}`}
-                      className="inline-flex items-center text-green-700 hover:text-green-800"
+                      className="inline-flex items-center text-business-600 hover:text-business-700"
                     >
                       View Project <ArrowRight className="ml-1 h-4 w-4" />
                     </Link>
@@ -198,7 +198,7 @@ export default function Home() {
               ))}
             </div>
             <div className="mt-12 text-center">
-              <Button asChild className="bg-green-700 hover:bg-green-800">
+              <Button asChild className="bg-business-600 hover:bg-business-700">
                 <Link href="/projects">View All Projects</Link>
               </Button>
             </div>
@@ -209,7 +209,7 @@ export default function Home() {
         <section className="bg-green-50 py-16 md:py-24">
           <div className="container">
             <div className="mb-12 text-center">
-              <h2 className="mb-4 text-3xl font-bold text-green-800 md:text-4xl">What Our Clients Say</h2>
+              <h2 className="mb-4 text-3xl font-bold text-business-700 md:text-4xl">What Our Clients Say</h2>
               <p className="mx-auto max-w-3xl text-gray-700">
                 Hear from our satisfied clients about their experience working with BusinessFy.
               </p>
@@ -259,14 +259,14 @@ export default function Home() {
         </section>
 
         {/* Call to Action */}
-        <section className="bg-green-800 py-16 text-white md:py-24">
+        <section className="bg-business-700 py-16 text-white md:py-24">
           <div className="container text-center">
             <h2 className="mb-6 text-3xl font-bold md:text-4xl">Ready to Start Your Project?</h2>
             <p className="mx-auto mb-8 max-w-2xl text-green-100">
               Contact us today to discuss how BusinessFy can help bring your vision to life. Our team is ready to
               provide the expertise and support you need.
             </p>
-            <Button asChild size="lg" className="bg-white text-green-800 hover:bg-green-100">
+            <Button asChild size="lg" className="bg-white text-business-700 hover:bg-business-100">
               <Link href="/contact">Contact Us Now</Link>
             </Button>
           </div>

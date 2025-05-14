@@ -15,6 +15,7 @@ import { ThemePreview } from "./theme-preview"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import { AccessibilityChecker } from "./accessibility-checker"
 
 // Define color themes
 const colorThemes = [
@@ -179,12 +180,13 @@ export function AppearanceSettings() {
       </div>
 
       <Tabs defaultValue="theme" value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-5">
+        <TabsList className="grid w-full grid-cols-6">
           <TabsTrigger value="theme">Theme Mode</TabsTrigger>
           <TabsTrigger value="colors">Brand Colors</TabsTrigger>
           <TabsTrigger value="industry">Industry Themes</TabsTrigger>
           <TabsTrigger value="custom">Custom Colors</TabsTrigger>
           <TabsTrigger value="typography">Typography & UI</TabsTrigger>
+          <TabsTrigger value="accessibility">Accessibility</TabsTrigger>
         </TabsList>
         <TabsContent value="theme" className="space-y-4">
           <div className="space-y-4">
@@ -558,6 +560,9 @@ export function AppearanceSettings() {
               </div>
             </div>
           </div>
+        </TabsContent>
+        <TabsContent value="accessibility" className="space-y-4">
+          <AccessibilityChecker />
         </TabsContent>
       </Tabs>
 
