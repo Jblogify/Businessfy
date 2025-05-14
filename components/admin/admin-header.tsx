@@ -26,14 +26,21 @@ export function AdminHeader() {
           <h1 className="text-xl font-semibold">Admin Dashboard</h1>
         </div>
         <div className="flex items-center space-x-4">
-          <Button variant="ghost" size="icon">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="text-business-600 hover:text-business-700 hover:bg-business-100"
+          >
             <Bell className="h-5 w-5" />
           </Button>
           <ThemeSwitcher />
           <ModeToggle />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+              <Button
+                variant="ghost"
+                className="relative h-8 w-8 rounded-full text-business-600 hover:text-business-700 hover:bg-business-100"
+              >
                 <User className="h-5 w-5" />
               </Button>
             </DropdownMenuTrigger>
