@@ -1,10 +1,7 @@
 import { SiteHeader } from "@/components/site-header"
 import { SiteFooter } from "@/components/site-footer"
-import { Button } from "@/components/ui/button"
+import { ContactForm } from "@/components/contact-form"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
 import { Clock, Mail, MapPin, Phone } from "lucide-react"
 
 export default function ContactPage() {
@@ -13,10 +10,10 @@ export default function ContactPage() {
       <SiteHeader />
       <main className="flex-1">
         {/* Hero Section */}
-        <section className="bg-green-50 py-12 md:py-16">
+        <section className="bg-business-50 py-12 md:py-16">
           <div className="container">
             <div className="text-center">
-              <h1 className="mb-4 text-4xl font-bold text-green-800 md:text-5xl">Contact Us</h1>
+              <h1 className="mb-4 text-4xl font-bold text-business-800 md:text-5xl">Contact Us</h1>
               <p className="mx-auto max-w-3xl text-lg text-gray-700">
                 We'd love to hear from you. Please fill out the form below or use our contact information to get in
                 touch with us.
@@ -37,37 +34,7 @@ export default function ContactPage() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <form className="space-y-4">
-                    <div className="grid gap-4 md:grid-cols-2">
-                      <div className="space-y-2">
-                        <Label htmlFor="first-name">First Name</Label>
-                        <Input id="first-name" placeholder="Enter your first name" />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="last-name">Last Name</Label>
-                        <Input id="last-name" placeholder="Enter your last name" />
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="email">Email</Label>
-                      <Input id="email" type="email" placeholder="Enter your email" />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="phone">Phone</Label>
-                      <Input id="phone" placeholder="Enter your phone number" />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="subject">Subject</Label>
-                      <Input id="subject" placeholder="Enter the subject" />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="message">Message</Label>
-                      <Textarea id="message" placeholder="Enter your message" className="min-h-[150px]" />
-                    </div>
-                    <Button type="submit" className="w-full bg-green-700 hover:bg-green-800">
-                      Send Message
-                    </Button>
-                  </form>
+                  <ContactForm />
                 </CardContent>
               </Card>
               <div className="flex flex-col gap-6">
@@ -78,28 +45,28 @@ export default function ContactPage() {
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="flex items-start gap-3">
-                      <MapPin className="mt-1 h-5 w-5 text-green-700" />
+                      <MapPin className="mt-1 h-5 w-5 text-business-600" />
                       <div>
                         <p className="font-medium">Address</p>
                         <p className="text-muted-foreground">King Fahd Road, Riyadh, Kingdom of Saudi Arabia</p>
                       </div>
                     </div>
                     <div className="flex items-start gap-3">
-                      <Phone className="mt-1 h-5 w-5 text-green-700" />
+                      <Phone className="mt-1 h-5 w-5 text-business-600" />
                       <div>
                         <p className="font-medium">Phone</p>
                         <p className="text-muted-foreground">+966 12 345 6789</p>
                       </div>
                     </div>
                     <div className="flex items-start gap-3">
-                      <Mail className="mt-1 h-5 w-5 text-green-700" />
+                      <Mail className="mt-1 h-5 w-5 text-business-600" />
                       <div>
                         <p className="font-medium">Email</p>
                         <p className="text-muted-foreground">info@jalalnasser.com</p>
                       </div>
                     </div>
                     <div className="flex items-start gap-3">
-                      <Clock className="mt-1 h-5 w-5 text-green-700" />
+                      <Clock className="mt-1 h-5 w-5 text-business-600" />
                       <div>
                         <p className="font-medium">Working Hours</p>
                         <p className="text-muted-foreground">Sunday - Thursday: 8:00 AM - 5:00 PM</p>
