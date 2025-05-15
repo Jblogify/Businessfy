@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Switch } from "@/components/ui/switch"
 
 export function PageSettings({ settings, onChange }) {
   const handleChange = (field, value) => {
@@ -17,9 +18,9 @@ export function PageSettings({ settings, onChange }) {
     <Card>
       <CardHeader>
         <CardTitle>Page Settings</CardTitle>
-        <CardDescription>Configure additional settings for this page</CardDescription>
+        <CardDescription>Configure how your page appears and behaves</CardDescription>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-6">
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <div className="space-y-2">
             <Label htmlFor="status">Status</Label>
@@ -48,50 +49,53 @@ export function PageSettings({ settings, onChange }) {
             </Select>
           </div>
         </div>
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          <div className="space-y-2">
-            <Label htmlFor="publish-date">Publish Date</Label>
-            <Input
-              id="publish-date"
-              type="date"
-              value={settings.publishDate}
-              onChange={(e) => handleChange("publishDate", e.target.value)}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="template">Template</Label>
-            <Select value={settings.template} onValueChange={(value) => handleChange("template", value)}>
-              <SelectTrigger id="template">
-                <SelectValue placeholder="Select template" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Default">Default</SelectItem>
-                <SelectItem value="Full Width">Full Width</SelectItem>
-                <SelectItem value="Sidebar">Sidebar</SelectItem>
-                <SelectItem value="Landing Page">Landing Page</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="publish-date">Publish Date</Label>
+          <Input
+            id="publish-date"
+            type="date"
+            value={settings.publishDate}
+            onChange={(e) => handleChange("publishDate", e.target.value)}
+          />
         </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="template">Page Template</Label>
+          <Select value={settings.template} onValueChange={(value) => handleChange("template", value)}>
+            <SelectTrigger id="template">
+              <SelectValue placeholder="Select template" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="Default">Default</SelectItem>
+              <SelectItem value="Full Width">Full Width</SelectItem>
+              <SelectItem value="Sidebar">Sidebar</SelectItem>
+              <SelectItem value="Landing Page">Landing Page</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
         <div className="space-y-2">
           <Label htmlFor="parent-page">Parent Page</Label>
           <Select
-            value={settings.parentPage || ""}
-            onValueChange={(value) => handleChange("parentPage", value === "" ? null : value)}
+            value={settings.parentPage || "none"}
+            onValueChange={(value) => handleChange("parentPage", value === "none" ? null : value)}
           >
             <SelectTrigger id="parent-page">
               <SelectValue placeholder="Select parent page" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="none">None</SelectItem>
-              <SelectItem value="1">Home</SelectItem>
-              <SelectItem value="2">About Us</SelectItem>
-              <SelectItem value="3">Services</SelectItem>
-              <SelectItem value="4">Projects</SelectItem>
+              <SelectItem value="none">None (Top Level)</SelectItem>
+              <SelectItem value="1">About Us</SelectItem>
+              <SelectItem value="2">Services</SelectItem>
+              <SelectItem value="3">Products</SelectItem>
             </SelectContent>
           </Select>
-          <p className="text-xs text-muted-foreground">Optional: Select a parent page to create a hierarchy</p>
+          <p className="text-xs text-muted-foreground">
+            Setting a parent page will make this page appear as a child in the navigation
+          </p>
         </div>
+
         <div className="space-y-2">
           <Label htmlFor="order">Menu Order</Label>
           <Input
@@ -101,7 +105,16 @@ export function PageSettings({ settings, onChange }) {
             value={settings.order}
             onChange={(e) => handleChange("order", Number.parseInt(e.target.value))}
           />
-          <p className="text-xs text-muted-foreground">Controls the order of this page in navigation menus</p>
+          <p className="text-xs text-muted-foreground">Pages are displayed in ascending order (1 comes before 2)</p>
+        </div>
+
+        <div className="flex items-center space-x-2">
+          <Switch
+            id="show-in-nav"
+            checked={settings.showInNav !== false}
+            onCheckedChange={(checked) => handleChange("showInNav", checked)}
+          />
+          <Label htmlFor="show-in-nav">Show in Navigation Menu</Label>
         </div>
       </CardContent>
     </Card>

@@ -24,32 +24,36 @@ export function PageSeo({ seo, onChange }) {
           <Label htmlFor="seo-title">SEO Title</Label>
           <Input
             id="seo-title"
-            placeholder="SEO Title (shown in search results)"
+            placeholder="SEO Title"
             value={seo.title}
             onChange={(e) => handleChange("title", e.target.value)}
           />
-          <p className="text-xs text-muted-foreground">Recommended length: 50-60 characters</p>
+          <p className="text-xs text-muted-foreground">
+            The title that appears in search engine results (recommended: 50-60 characters)
+          </p>
         </div>
         <div className="space-y-2">
           <Label htmlFor="seo-description">Meta Description</Label>
           <Textarea
             id="seo-description"
-            placeholder="Brief description of the page for search results"
+            placeholder="Enter a description for search engines"
             value={seo.description}
             onChange={(e) => handleChange("description", e.target.value)}
             rows={3}
           />
-          <p className="text-xs text-muted-foreground">Recommended length: 150-160 characters</p>
+          <p className="text-xs text-muted-foreground">
+            The description that appears in search engine results (recommended: 150-160 characters)
+          </p>
         </div>
         <div className="space-y-2">
           <Label htmlFor="seo-keywords">Keywords</Label>
           <Input
             id="seo-keywords"
-            placeholder="Comma-separated keywords"
+            placeholder="keyword1, keyword2, keyword3"
             value={seo.keywords}
             onChange={(e) => handleChange("keywords", e.target.value)}
           />
-          <p className="text-xs text-muted-foreground">Separate keywords with commas</p>
+          <p className="text-xs text-muted-foreground">Comma-separated keywords related to your page</p>
         </div>
       </CardContent>
     </Card>
