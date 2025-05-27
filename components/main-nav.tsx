@@ -1,68 +1,36 @@
 "use client"
 
-import { useState, useEffect } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { NavigationMenu, NavigationMenuItem, NavigationMenuList } from "@/components/ui/navigation-menu"
 import { cn } from "@/lib/utils"
-
-// Default navigation links
-const defaultLinks = [
-  { href: "/", label: "Home" },
-  { href: "/projects", label: "Projects" },
-  { href: "/services", label: "Services" },
-  { href: "/about", label: "About" },
-  { href: "/contact", label: "Contact" },
-]
+import { siteConfig } from "@/config/site"
 
 export function MainNav() {
   const pathname = usePathname()
-  const [hoveredItem, setHoveredItem] = useState<string | null>(null)
-  const [links, setLinks] = useState(defaultLinks)
-
-  // Load navigation from localStorage if available
-  useEffect(() => {
-    const storedNavigation = localStorage.getItem("siteNavigation")
-    if (storedNavigation) {
-      try {
-        const parsedNavigation = JSON.parse(storedNavigation)
-        if (Array.isArray(parsedNavigation) && parsedNavigation.length > 0) {
-          setLinks(parsedNavigation)
-        }
-      } catch (error) {
-        console.error("Error parsing navigation:", error)
-      }
-    }
-  }, [])
 
   return (
-    <div className="flex justify-center">
-      <NavigationMenu className="mx-auto">
-        <NavigationMenuList className="flex gap-6">
-          {links.map((item) => {
-            const isActive = pathname === item.href
-            const isHovered = hoveredItem === item.href
-
-            return (
-              <NavigationMenuItem key={item.href}>
-                <Link
-                  href={item.href}
-                  className={cn(
-                    "transition-colors hover:text-white text-white/90 font-medium relative drop-shadow-sm",
-                    pathname === item.href
-                      ? "text-white after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-white after:rounded-full"
-                      : "hover:after:absolute hover:after:bottom-0 hover:after:left-0 hover:after:right-0 hover:after:h-0.5 hover:after:bg-white/70 hover:after:rounded-full",
-                  )}
-                  onMouseEnter={() => setHoveredItem(item.href)}
-                  onMouseLeave={() => setHoveredItem(null)}
-                >
-                  {item.label}
-                </Link>
-              </NavigationMenuItem>
-            )
-          })}
-        </NavigationMenuList>
-      </NavigationMenu>
-    </div>
+    <nav className="flex items-center space-x-6 text-sm font-medium">
+      {siteConfig.mainNav.map((item) => (
+        <Link
+          key={item.href}
+          href={item.href}
+          className={cn(
+            "relative px-3 py-2 transition-all duration-300 ease-in-out rounded-md",
+            "hover:text-business-600 dark:hover:text-business-400",
+            "focus:outline-none focus:ring-2 focus:ring-business-500 focus:ring-offset-2",
+            "transform hover:scale-105",
+            pathname === item.href
+              ? "text-business-600 dark:text-business-400 font-semibold"
+              : "text-foreground/70 hover:text-business-600 dark:text-foreground/70 dark:hover:text-business-400",
+          )}
+        >
+          <span className="relative z-10">{item.title}</span>
+          {pathname === item.href && (
+            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-business-600 dark:bg-business-400 rounded-full transition-all duration-300" />
+          )}
+          <div className="absolute inset-0 bg-business-50 dark:bg-business-900/20 rounded-md opacity-0 hover:opacity-100 transition-opacity duration-300 -z-10" />
+        </Link>
+      ))}
+    </nav>
   )
 }

@@ -1,96 +1,116 @@
 "use client"
 
-import { useEffect, useState } from "react"
 import Link from "next/link"
-import { MainNav } from "@/components/main-nav"
-import { ModeToggle } from "@/components/mode-toggle"
-import { BusinessFyLogo } from "@/components/ui/businessfy-logo"
-import { ThemeSwitcher } from "@/components/theme-switcher"
-import { useMobile } from "@/hooks/use-mobile"
-import { ScrollProgress } from "@/components/scroll-progress"
+import { useState, useEffect } from "react"
+import { Button } from "@/components/ui/button"
+import { Menu, X } from "lucide-react"
+
+const navigation = [
+  { name: "Home", href: "/" },
+  { name: "About", href: "/about" },
+  { name: "Services", href: "/services" },
+  { name: "Projects", href: "/projects" },
+  { name: "Contact", href: "/contact" },
+]
 
 export function SiteHeader() {
-  const [scrolled, setScrolled] = useState(false)
-  const [hovered, setHovered] = useState(false)
-  const isMobile = useMobile()
-
-  // Adjust scroll threshold based on device
-  const scrollThreshold = isMobile ? 10 : 20
+  const [isScrolled, setIsScrolled] = useState(false)
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
 
   useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768)
+    }
+
     const handleScroll = () => {
-      // Use a more sensitive threshold for mobile
-      const isScrolled = window.scrollY > scrollThreshold
-      setScrolled(isScrolled)
+      setIsScrolled(window.scrollY > 10)
     }
 
-    // Add scroll event listener with throttling for better performance
-    let ticking = false
-    const onScroll = () => {
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          handleScroll()
-          ticking = false
-        })
-        ticking = true
-      }
-    }
-
-    window.addEventListener("scroll", onScroll, { passive: true })
-
-    // Check initial scroll position
+    checkMobile()
     handleScroll()
 
-    // Clean up event listener
-    return () => {
-      window.removeEventListener("scroll", onScroll)
-    }
-  }, [scrollThreshold, isMobile]) // Removed scrolled from dependencies
+    window.addEventListener("resize", checkMobile)
+    window.addEventListener("scroll", handleScroll)
 
-  // Calculate size reduction based on device
-  const logoSize = scrolled ? (isMobile ? 22 : 24) : isMobile ? 24 : 28
-  const headerHeight = scrolled ? (isMobile ? "h-12" : "h-14") : isMobile ? "h-14" : "h-16"
-  const logoScale = scrolled ? (isMobile ? "scale-90" : "scale-95") : "scale-100"
+    return () => {
+      window.removeEventListener("resize", checkMobile)
+      window.removeEventListener("scroll", handleScroll)
+    }
+  }, [])
 
   return (
-    <>
-      <ScrollProgress />
-      <header
-        className={`sticky top-0 z-40 w-full border-b border-gray-800 bg-zinc-900 text-white/90 transition-all duration-200 ${headerHeight} ${
-          scrolled ? "shadow-md" : ""
-        }`}
-      >
-        <div className="flex justify-center w-full h-full">
-          <div
-            className={`w-[95%] md:w-[90%] lg:w-[85%] flex items-center justify-between px-4 sm:px-8 h-full transition-all duration-300 bg-business-600 rounded-md sm:rounded-lg 
-            ${scrolled ? "opacity-90 rounded-none" : "opacity-100 mt-1"}
-            ${hovered && !scrolled ? "shadow-[0_0_15px_rgba(59,130,246,0.15)] border border-business-900/20" : "border border-transparent"}
-            `}
-            onMouseEnter={() => setHovered(true)}
-            onMouseLeave={() => setHovered(false)}
-          >
-            <div className="flex items-center">
-              <Link href="/" className="flex items-center space-x-2">
-                <BusinessFyLogo
-                  size={logoSize}
-                  textClassName={`transition-all duration-200 ${isMobile ? "text-lg" : "text-xl"} ${logoScale} ${
-                    hovered ? "text-white" : ""
-                  } drop-shadow-sm`}
-                />
-              </Link>
+    <header
+      className={`sticky top-0 z-50 w-full border-b transition-all duration-300 ${
+        isScrolled
+          ? "bg-background/80 backdrop-blur-md border-border/40"
+          : "bg-background/60 backdrop-blur-sm border-transparent"
+      }`}
+    >
+      <div className="container flex h-16 items-center justify-between">
+        <div className="flex items-center space-x-4">
+          <Link href="/" className="flex items-center space-x-2">
+            <div className="h-8 w-8 bg-gradient-to-r from-blue-600 to-blue-800 rounded-lg flex items-center justify-center">
+              <span className="text-white font-bold text-sm">B</span>
             </div>
+            <span className="font-bold text-xl">BusinessFy</span>
+          </Link>
+        </div>
 
-            <div className="flex-1">
-              <MainNav />
+        {!isMobile ? (
+          <div className="flex items-center space-x-6">
+            <nav className="flex justify-center w-full">
+              <div className="flex items-center justify-center space-x-8 text-sm font-medium">
+                {navigation.map((item) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className="relative px-3 py-2 transition-all duration-300 ease-in-out rounded-md hover:text-blue-600 dark:hover:text-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transform hover:scale-105 text-foreground/70"
+                  >
+                    <span className="relative z-10">{item.name}</span>
+                    <div className="absolute inset-0 bg-blue-50 dark:bg-blue-900/20 rounded-md opacity-0 hover:opacity-100 transition-opacity duration-300 -z-10" />
+                  </Link>
+                ))}
+              </div>
+            </nav>
+            <div className="flex items-center space-x-2">
+              <Button asChild className="bg-blue-600 hover:bg-blue-700">
+                <Link href="/contact">Contact Us</Link>
+              </Button>
             </div>
+          </div>
+        ) : (
+          <div className="flex items-center space-x-2">
+            <Button variant="ghost" size="sm" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="p-2">
+              {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </Button>
+          </div>
+        )}
+      </div>
 
-            <div className="flex items-center gap-3 bg-zinc-700/60 p-1.5 rounded-lg backdrop-blur-md">
-              <ThemeSwitcher className="bg-zinc-700 hover:bg-zinc-600 text-white border-none shadow-sm" />
-              <ModeToggle />
+      {isMobile && isMobileMenuOpen && (
+        <div className="border-t bg-background/95 backdrop-blur-md">
+          <div className="container py-4">
+            <nav className="flex flex-col space-y-2">
+              {navigation.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className="px-3 py-2 text-sm font-medium text-foreground/70 hover:text-blue-600 transition-colors"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  {item.name}
+                </Link>
+              ))}
+            </nav>
+            <div className="mt-4">
+              <Button asChild className="w-full bg-blue-600 hover:bg-blue-700">
+                <Link href="/contact">Contact Us</Link>
+              </Button>
             </div>
           </div>
         </div>
-      </header>
-    </>
+      )}
+    </header>
   )
 }

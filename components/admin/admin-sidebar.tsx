@@ -1,64 +1,39 @@
 "use client"
 
+import { Home, LogOut } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { cn } from "@/lib/utils"
-import {
-  BarChart3,
-  FileText,
-  Home,
-  ImageIcon,
-  LayoutDashboard,
-  LogOut,
-  MessageSquare,
-  Palette,
-  Settings,
-  Users,
-} from "lucide-react"
+
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { BusinessFyLogo } from "@/components/ui/businessfy-logo"
+import { cn } from "@/lib/utils"
+import { BusinessFyLogo } from "@/components/businessfy-logo"
 
 const sidebarItems = [
   {
-    title: "Dashboard",
+    title: "Overview",
     href: "/admin",
-    icon: LayoutDashboard,
+    icon: Home,
   },
   {
-    title: "Pages",
-    href: "/admin/pages",
-    icon: FileText,
+    title: "Products",
+    href: "/admin/products",
+    icon: Home,
   },
   {
-    title: "Media",
-    href: "/admin/media",
-    icon: ImageIcon,
+    title: "Orders",
+    href: "/admin/orders",
+    icon: Home,
   },
   {
-    title: "Users",
-    href: "/admin/users",
-    icon: Users,
-  },
-  {
-    title: "Messages",
-    href: "/admin/messages",
-    icon: MessageSquare,
-  },
-  {
-    title: "Analytics",
-    href: "/admin/analytics",
-    icon: BarChart3,
-  },
-  {
-    title: "Style Guide",
-    href: "/admin/style-guide",
-    icon: Palette,
+    title: "Customers",
+    href: "/admin/customers",
+    icon: Home,
   },
   {
     title: "Settings",
     href: "/admin/settings",
-    icon: Settings,
+    icon: Home,
   },
 ]
 

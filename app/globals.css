@@ -6,10 +6,8 @@
   :root {
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
-
     --card: 0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;
-
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
@@ -17,7 +15,7 @@
     --primary: 217 91% 60%;
     --primary-foreground: 210 40% 98%;
 
-    --secondary: 221 83% 95%;
+    --secondary: 221 83% 95%; /* Updated value */
     --secondary-foreground: 222.2 47.4% 11.2%;
 
     --muted: 210 40% 96.1%;
@@ -68,11 +66,236 @@
   }
 }
 
+/* Custom styles for the navigation */
+header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  width: 100%;
+  border-bottom: 1px solid #e5e7eb;
+  background-color: white;
+}
+
+header > div {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  height: 4rem;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1rem;
+}
+
+header a {
+  text-decoration: none;
+  color: #374151;
+}
+
+header nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+}
+
+header nav a {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+header nav a:hover {
+  color: #2563eb;
+}
+
+/* Logo styles */
+header > div > div:first-child {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+header > div > div:first-child > a {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+header > div > div:first-child > a > div {
+  height: 2rem;
+  width: 2rem;
+  background-color: #2563eb;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+header > div > div:first-child > a > div > span {
+  color: white;
+  font-weight: bold;
+  font-size: 0.875rem;
+}
+
+header > div > div:first-child > a > span {
+  font-weight: bold;
+  font-size: 1.25rem;
+}
+
+/* Contact button */
+header > div > div:last-child > a {
+  background-color: #2563eb;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+}
+
+header > div > div:last-child > a:hover {
+  background-color: #1d4ed8;
+}
+
+/* Main content */
+main section:first-child {
+  background-color: #2563eb;
+  color: white;
+  padding: 5rem 0;
+}
+
+main section:first-child > div {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+  text-align: center;
+}
+
+main section:first-child h1 {
+  font-size: 3rem;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+}
+
+main section:first-child p {
+  font-size: 1.25rem;
+  margin-bottom: 2rem;
+  max-width: 48rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+main section:first-child > div > div {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  justify-content: center;
+}
+
+main section:first-child a {
+  background-color: white;
+  color: #2563eb;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.375rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+
+main section:first-child a:hover {
+  background-color: #f3f4f6;
+}
+
+/* About section */
+main section:nth-child(2) {
+  padding: 5rem 0;
+}
+
+main section:nth-child(2) > div {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+main section:nth-child(2) h2 {
+  font-size: 2.25rem;
+  font-weight: bold;
+  color: #1d4ed8;
+  margin-bottom: 1.5rem;
+}
+
+main section:nth-child(2) p {
+  color: #374151;
+  margin-bottom: 1.5rem;
+}
+
+main section:nth-child(2) a {
+  background-color: #2563eb;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+/* Footer */
+footer {
+  border-top: 1px solid #e5e7eb;
+  background-color: #f9fafb;
+  padding: 2rem 0;
+}
+
+footer > div {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+  text-align: center;
+}
+
+footer p {
+  color: #6b7280;
+}
+
+/* Responsive design */
+@media (min-width: 640px) {
+  main section:first-child > div > div {
+    flex-direction: row;
+  }
+
+  header nav {
+    display: flex;
+  }
+}
+
+@media (max-width: 639px) {
+  header nav {
+    display: none;
+  }
+
+  main section:first-child h1 {
+    font-size: 2rem;
+  }
+}
+
 @layer base {
   * {
     @apply border-border;
   }
   body {
     @apply bg-background text-foreground;
+    font-family: system-ui, sans-serif;
+    margin: 0;
+    padding: 20px;
   }
+}
+
+h1 {
+  color: #2563eb;
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+p {
+  color: #374151;
+  font-size: 1.125rem;
 }
