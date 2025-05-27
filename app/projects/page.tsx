@@ -13,6 +13,7 @@ import { CalendarIcon, Filter, Grid, List, Search } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
+import { ProjectEditButton } from "@/components/admin/project-edit-button"
 
 // Sample project data
 const projects = [
@@ -349,6 +350,7 @@ function ProjectCard({ project }: { project: any }) {
           <Button asChild className="flex-1 bg-business-600 hover:bg-business-700">
             <Link href={`/projects/${project.id}`}>View Details</Link>
           </Button>
+          <ProjectEditButton projectId={project.id} />
         </div>
       </CardContent>
     </Card>
