@@ -62,7 +62,13 @@ export default function HomePage() {
       </header>
 
       <main className="flex-1">
-        <section className="relative h-[600px] overflow-hidden bg-gradient-to-r from-blue-600 to-blue-800">
+        <section className="relative h-[600px] overflow-hidden">
+          <div className="absolute inset-0 bg-black/50 z-10"></div>
+          <img
+            src="/placeholder.svg?height=600&width=1920"
+            alt="Modern building architecture"
+            className="absolute inset-0 w-full h-full object-cover"
+          />
           <div className="container mx-auto relative z-20 flex h-full flex-col items-center justify-center text-center text-white px-4">
             <h1 className="mb-4 text-4xl font-bold leading-tight md:text-5xl lg:text-6xl">
               Building the Future of Saudi Arabia

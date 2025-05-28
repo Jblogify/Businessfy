@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import { AuthProvider } from "@/lib/auth-context"
 import { ThemeProvider as NextThemeProvider } from "@/components/theme-provider"
 import { ThemeProvider as ColorThemeProvider } from "@/lib/theme-context"
